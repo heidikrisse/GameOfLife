@@ -1,6 +1,20 @@
 # GameOfLife
 
+A simple implementation of Conway's Game of Life game. 
+
 ## How to play
+
+The game starts with an empty game board. You have the following options:
+
+1. Use the default demo game board size.
+2. Specify the game board size.
+
+Once the game board is initialized, you can choose one of the following options:
+
+- Play: The game will continuously evolve the game board until you choose to stop.
+- Pause: Pause the game at the current generation.
+- Step: The game will evolve the game board one generation at a time.
+- Exit: Exit the game.
 
 ## Dependencies
 
@@ -33,5 +47,5 @@ make
 ## Run Unit Tests
 
 ```shell
-./tests/unit_tests
+./tests/unit_tests_results
 ```
