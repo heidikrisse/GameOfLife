@@ -10,6 +10,6 @@ include_directories(${PROJECT_SOURCE_DIR} include)
 add_subdirectory(src)
 add_subdirectory(tests)
 
-add_executable(${PROJECT_NAME} main.cpp)
+# add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC user_ui game stdc++fs)
+# target_link_libraries(${PROJECT_NAME} PUBLIC user_ui game stdc++fs)
