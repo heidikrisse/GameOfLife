@@ -6,14 +6,12 @@
 #include <string>
 #include <iostream>
 
-// Start with default pattern or random pattern (or user-defined?)
-
 // TODO: Ikkunan leveyttä ja korkeutta voi lisää säätää, samoin tekstien paikkaa ja fonttia (ensimmäinen nro on leveys, toinen korkeus ja kolmas on fontti)
 
 void get_user_input_boardsize(int &board_width, int &board_height)
 {
-    // width x height = 600 x 300
-    InitWindow(700, 300, "Game of Life - User Input");
+    // width x height = 1000 x 300
+    InitWindow(1000, 500, "Game of Life - User Input");
     SetTargetFPS(40);
 
     bool default_size{true};
@@ -25,18 +23,18 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         ClearBackground(RAYWHITE);
 
         // Display title and options
-        DrawText("Game of Life - User Input", 10, 10, 40, BLACK); // first numbers are the coordinates (10, 10) and last number is font size (30)
-        DrawText("Choose an option:", 10, 70, 30, BLACK);
-        DrawText("1. Use default board size", 30, 120, 20, BLACK);
-        DrawText("2. Specify board size", 30, 150, 20, BLACK);
+        DrawText("Game of Life - Board Size Selection", 10, 10, 40, BLACK); // first numbers are the coordinates (10, 10) and last number is font size (30)
+        DrawText("Choose an option:", 10, 100, 30, BLACK);
+        DrawText("1. Use default board size", 30, 180, 30, BLACK);
+        DrawText("2. Specify board size", 30, 230, 30, BLACK);
 
         if (default_size)
         {
-            DrawText("> ", 10, 120, 20, BLACK); // arrow to the same height as the options
+            DrawText("> ", 10, 180, 30, BLACK); // arrow to the same height as the options
         }
         else
         {
-            DrawText("> ", 10, 150, 20, BLACK);
+            DrawText("> ", 10, 230, 30, BLACK);
         }
 
         EndDrawing();
@@ -63,7 +61,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     else
     {
         CloseWindow();
-        InitWindow(700, 500, "Game of Life - Board Size");
+        InitWindow(1000, 500, "Game of Life - Board Size Selection");
         SetTargetFPS(40);
 
         bool is_valid_size{false};
@@ -76,17 +74,17 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             ClearBackground(RAYWHITE);
 
             // Display the title and board size inputs
-            DrawText("Game of Life - Board Size", 10, 10, 40, BLACK);
-            DrawText("Enter board width (1-100):", 10, 90, 20, BLACK);
-            DrawText("Enter board height (1-100):", 10, 130, 20, BLACK);
+            DrawText("Game of Life - Set Width and Height", 10, 10, 40, BLACK);
+            DrawText("Enter board width (1-100):", 10, 100, 30, BLACK);
+            DrawText("Enter board height (1-100):", 10, 150, 30, BLACK);
 
-            DrawText(std::to_string(board_width).c_str(), 290, 90, 20, BLACK); // same height as the enter text but little bit more right
-            DrawText(std::to_string(board_height).c_str(), 310, 130, 20, BLACK);
+            DrawText(std::to_string(board_width).c_str(), 450, 100, 30, BLACK); // same height as the enter text but little bit more right
+            DrawText(std::to_string(board_height).c_str(), 450, 150, 30, BLACK);
 
             // Instructions for the user:
-            DrawText("Use UP/DOWN arrow keys to adjust width", 10, 200, 15, BLACK);
-            DrawText("Use LEFT/RIGHT arrow keys to adjust height", 10, 230, 15, BLACK);
-            DrawText("Press ENTER to confirm the board size", 10, 260, 15, BLACK);
+            DrawText("Use UP/DOWN arrow keys to adjust width", 10, 250, 20, BLACK);
+            DrawText("Use LEFT/RIGHT arrow keys to adjust height", 10, 280, 20, BLACK);
+            DrawText("Press ENTER to confirm the board size", 10, 310, 20, BLACK);
 
             EndDrawing();
 
@@ -126,6 +124,53 @@ void get_user_input_boardsize(int &board_width, int &board_height)
                 }
             }
         }
+    }
+
+    CloseWindow();
+}
+
+void get_user_input_pattern(bool &random_pattern)
+{
+    InitWindow(1000, 500, "Game of Life - Pattern Selection");
+    SetTargetFPS(40);
+
+    bool default_pattern{true};
+    bool is_running{true};
+
+    while (is_running)
+    {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawText("Game of Life - Pattern Selection", 10, 10, 40, BLACK);
+        DrawText("Choose an option:", 10, 100, 30, BLACK);
+        DrawText("1. Use default pattern", 30, 180, 30, BLACK);
+        DrawText("2. Randomize pattern", 30, 230, 30, BLACK);
+
+        if (default_pattern)
+        {
+            DrawText("> ", 10, 180, 30, BLACK);
+        }
+        else
+        {
+            DrawText("> ", 10, 230, 30, BLACK);
+        }
+
+        EndDrawing();
+
+        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN))
+        {
+            default_pattern = !default_pattern;
+        }
+        else if (IsKeyPressed(KEY_ENTER))
+        {
+            is_running = false;
+        }
+    }
+
+    if (!default_pattern)
+    {
+        random_pattern = true;
     }
 
     CloseWindow();

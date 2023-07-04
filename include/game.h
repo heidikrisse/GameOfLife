@@ -11,7 +11,7 @@ struct Cell
 
 using Gameboard = std::vector<std::vector<Cell>>;
 
-void game_render_loop(Gameboard &gameboard);
+void game_render_loop(Gameboard &gameboard, bool random_pattern);
 
 void draw_one_evolution(Gameboard &gameboard);
 
@@ -22,6 +22,10 @@ bool update_cell(const Cell &cell);
 void evolve_board(Gameboard &gameboard);
 
 void print_board(const Gameboard &gameboard);
+
+void default_starting_pattern(Gameboard &gameboard);
+
+void randomize_starting_pattern(Gameboard &gameboard);
 
 Gameboard create_board(int width, int height);
 

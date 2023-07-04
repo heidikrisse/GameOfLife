@@ -14,13 +14,14 @@ int main(void)
 
     Gameboard gameboard{create_board(board_width, board_height)};
 
-    // Gameboard gameboard{create_board(20, 20)};
+    bool random_pattern{false};
 
-    // gameboard.at(8).at(10).is_alive = true;
-    // gameboard.at(9).at(10).is_alive = true;
-    // gameboard.at(10).at(10).is_alive = true;
+    // Get user input for pattern choice
+    get_user_input_pattern(random_pattern);
 
-    game_render_loop(gameboard);
+    game_render_loop(gameboard, random_pattern);
+
+    // game_render_loop(gameboard);
 
     return 0;
 }

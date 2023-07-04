@@ -4,8 +4,11 @@
 #include <algorithm> // for std::copy
 #include <iostream>
 #include <vector>
+#include <random>
 
-void game_render_loop(Gameboard &gameboard)
+// TODO: pause (p) / step (väli) ei toimi vielä (q = quit toimii) - saatava joku ajallinen viive!
+// TODO: marginit, jotta tekstit näkyvät
+void game_render_loop(Gameboard &gameboard, bool random_pattern)
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life");
 
@@ -13,6 +16,17 @@ void game_render_loop(Gameboard &gameboard)
 
     bool paused{false};
     bool step{false};
+
+    if (random_pattern)
+    {
+        // Set randomized starting pattern
+        randomize_starting_pattern(gameboard);
+    }
+    else
+    {
+        // Set default starting pattern
+        default_starting_pattern(gameboard);
+    }
 
     while (!WindowShouldClose())
     {
@@ -103,12 +117,12 @@ void evolve_board(Gameboard &gameboard)
 {
     Gameboard copy_of_board{gameboard};
 
-    std::size_t height{gameboard.size()};
-    std::size_t width{gameboard.at(0).size()};
+    int height{static_cast<int>(gameboard.size())};
+    int width{static_cast<int>(gameboard[0].size())};
 
-    for (std::size_t row{0}; row < height; ++row)
+    for (int row{0}; row < height; ++row)
     {
-        for (std::size_t col{0}; col < width; ++col)
+        for (int col{0}; col < width; ++col)
         {
             // Calculates the number of neighbors alive from the copy, which stays unmodified
             copy_of_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(copy_of_board, row, col);
@@ -119,24 +133,59 @@ void evolve_board(Gameboard &gameboard)
     }
 }
 
-// void randomize_starting_pattern()
-// {
-//     std::random_device rd;
-//     std::mt19937 gen(rd());
-//     std::uniform_distribution<int> dist(0, 1); // 0 = false, 1 = true
-// }
+// TODO: Katso vielä tarkemmin miten järjevä laittaa että ei heti pysähdy tiettyyn tilaan, ota huomioon ettei mene out of range
+void default_starting_pattern(Gameboard &gameboard)
+{
+    int width = static_cast<int>(gameboard[0].size());
+    int height = static_cast<int>(gameboard.size());
+
+    if (width >= 11 && height >= 9)
+    {
+        gameboard.at(8).at(10).is_alive = true;
+        gameboard.at(9).at(10).is_alive = true;
+        gameboard.at(10).at(10).is_alive = true;
+    }
+    // TODO: Keksi parempi kuvio, joka ei heti pysähdy paikoilleen
+    else if (width >= 4 && height >= 4)
+    {
+        // gameboard.at(0).at(0).is_alive = true;
+        gameboard.at(0).at(1).is_alive = true;
+        gameboard.at(1).at(0).is_alive = true;
+        gameboard.at(0).at(2).is_alive = true;
+        gameboard.at(2).at(3).is_alive = true;
+    }
+    else
+    {
+        gameboard.at(0).at(0).is_alive = true;
+    }
+}
+
+void randomize_starting_pattern(Gameboard &gameboard)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(0, 1); // 0 = false, 1 = true
+
+    for (auto &row : gameboard)
+    {
+        for (auto &cell : row)
+        {
+            cell.is_alive = dist(gen);
+        }
+    }
+}
 
 void print_board(const Gameboard &gameboard)
 {
-    std::size_t height{gameboard.size()};
-    std::size_t width{gameboard[0].size()};
+    int height{static_cast<int>(gameboard.size())};
+    int width{static_cast<int>(gameboard[0].size())};
 
     int scaled_width{SCREEN_WIDTH / static_cast<int>(width)};
     int scaled_height{SCREEN_HEIGHT / static_cast<int>(height)};
 
-    for (std::size_t row{0}; row < height; ++row)
+    for (int row{0}; row < height; ++row)
     {
-        for (std::size_t col{0}; col < width; ++col)
+        for (int col{0}; col < width; ++col)
         {
             if (gameboard.at(row).at(col).is_alive)
             {
