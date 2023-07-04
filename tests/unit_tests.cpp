@@ -34,40 +34,56 @@ TEST_CASE("Test cell update functions")
         gameboard.at(5).at(5).is_alive = true;
         gameboard.at(5).at(6).is_alive = true;
         gameboard.at(5).at(7).is_alive = true;
-
+        
         CHECK(count_cell_alive_neighbors(gameboard, 5, 6) == 2);
         CHECK(count_cell_alive_neighbors(gameboard, 5, 5) == 1);
         CHECK(count_cell_alive_neighbors(gameboard, 0, 0) == 0);
         CHECK(count_cell_alive_neighbors(gameboard, 5, 7) == 1);
         CHECK(count_cell_alive_neighbors(gameboard, 6, 6) == 3);
         CHECK(count_cell_alive_neighbors(gameboard, 4, 6) == 3);
+    }
 
-        gameboard.at(5).at(6).alive_neighbors = count_cell_alive_neighbors(gameboard, 5, 6);
-        gameboard.at(5).at(5).alive_neighbors = count_cell_alive_neighbors(gameboard, 5, 5);
-        gameboard.at(0).at(0).alive_neighbors = count_cell_alive_neighbors(gameboard, 0, 0);
-        gameboard.at(5).at(7).alive_neighbors = count_cell_alive_neighbors(gameboard, 5, 7);
-        gameboard.at(6).at(6).alive_neighbors = count_cell_alive_neighbors(gameboard, 6, 6);
-        gameboard.at(4).at(6).alive_neighbors = count_cell_alive_neighbors(gameboard, 4, 6);
+    SUBCASE("Update cell")
+    {
+        Gameboard gameboard{create_board(15, 15)};
+        gameboard.at(5).at(5).is_alive = true;
+        gameboard.at(5).at(6).is_alive = true;
+        gameboard.at(5).at(7).is_alive = true;
+        gameboard.at(5).at(5).alive_neighbors = 1;
+        gameboard.at(5).at(6).alive_neighbors = 2;
+        gameboard.at(5).at(7).alive_neighbors = 1;
+        gameboard.at(4).at(6).alive_neighbors = 3;
+        gameboard.at(6).at(6).alive_neighbors = 3;
 
-        // evolve_board(gameboard);
-
-        CHECK(update_cell(gameboard.at(4).at(6)) == true);
+        CHECK(update_cell(gameboard.at(0).at(0)) == false);
         CHECK(update_cell(gameboard.at(5).at(5)) == false);
         CHECK(update_cell(gameboard.at(5).at(6)) == true);
         CHECK(update_cell(gameboard.at(5).at(7)) == false);
+        CHECK(update_cell(gameboard.at(4).at(6)) == true);
         CHECK(update_cell(gameboard.at(6).at(6)) == true);
-        CHECK(update_cell(gameboard.at(0).at(0)) == false);
-
-        // CHECK(gameboard.at(5).at(5).is_alive == false);
-        // CHECK(gameboard.at(6).at(6).is_alive == true);
-        // CHECK(gameboard.at(4).at(6).is_alive == true);
-        // CHECK(gameboard.at(0).at(0).is_alive == false);
     }
 
-    // SUBCASE("")
-    // {
+    SUBCASE("Evolve board")
+    {
+        Gameboard gameboard{create_board(15, 15)};
+        gameboard.at(5).at(5).is_alive = true;
+        gameboard.at(5).at(6).is_alive = true;
+        gameboard.at(5).at(7).is_alive = true;
 
-    // }
+        evolve_board(gameboard);
+
+        CHECK(gameboard.at(0).at(0).is_alive == false); // doesn't change
+        CHECK(gameboard.at(5).at(5).is_alive == false);
+        CHECK(gameboard.at(5).at(6).is_alive == true);
+        CHECK(gameboard.at(5).at(7).is_alive == false);
+
+        evolve_board(gameboard);
+
+        CHECK(gameboard.at(0).at(0).is_alive == false); // doesn't change
+        CHECK(gameboard.at(5).at(5).is_alive == true);
+        CHECK(gameboard.at(5).at(6).is_alive == true);
+        CHECK(gameboard.at(5).at(7).is_alive == true);
+    }
 }
 
 // TEST_CASE(""){

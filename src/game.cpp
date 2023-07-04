@@ -7,20 +7,46 @@
 
 void game_render_loop(Gameboard &gameboard)
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life");
 
-    SetTargetFPS(40);
+    SetTargetFPS(40); // FPS = frames per second
+
+    bool paused{false};
+    bool step{false};
 
     while (!WindowShouldClose())
     {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        print_board(gameboard);
-        evolve_board(gameboard);
-        EndDrawing();
+        if (IsKeyPressed(KEY_P))
+        {
+            paused = !paused;
+        }
+        else if (IsKeyPressed(KEY_SPACE))
+        {
+            step = true;
+        }
+        else if (IsKeyPressed(KEY_Q))
+        {
+            break;
+        }
+
+        if (!paused || step)
+        {
+            draw_one_evolution(gameboard);
+            step = false;
+        }
     }
 
     CloseWindow();
+}
+
+void draw_one_evolution(Gameboard &gameboard)
+{
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Q - quit | P - pause | SPACE - step", 10, 10, 10, DARKGRAY);
+    print_board(gameboard);
+    evolve_board(gameboard);
+    EndDrawing();
 }
 
 int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
@@ -120,19 +146,17 @@ void print_board(const Gameboard &gameboard)
     }
 }
 
-Gameboard create_board(int width, int height)
+Gameboard create_board(int board_width, int board_height)
 {
-    if (width > 0 && height > 0)
+    if (board_width <= 0 || board_width > 100 || board_height <= 0 || board_height > 100)
     {
-        Gameboard gameboard(height, std::vector<Cell>(width));
+        board_width = DEFAULT_BOARD_WIDTH;
+        board_height = DEFAULT_BOARD_HEIGHT;
 
-        return gameboard;
+        std::cout << "Creating a default gameboard " << DEFAULT_BOARD_WIDTH << "x" << DEFAULT_BOARD_HEIGHT << "...\n";
     }
-    else
-    {
-        Gameboard gameboard(10, std::vector<Cell>(10));
-        std::cout << "Created a default gameboard 10x10.\n";
 
-        return gameboard;
-    }
+    Gameboard gameboard(board_height, std::vector<Cell>(board_width));
+
+    return gameboard;
 }
