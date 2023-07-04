@@ -1,21 +1,23 @@
 #include "game.h"
 #include "constants.h"
 #include "raylib.h"
-
+#include <algorithm> // for std::copy
 #include <iostream>
 #include <vector>
 
-void game_render_loop(const Gameboard &gameboard)
+void game_render_loop(Gameboard &gameboard)
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window");
+
+    SetTargetFPS(40);
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         print_board(gameboard);
-
-        EndDrawing();
+        evolve_board(gameboard);
+        EndDrawing(
     }
 
     CloseWindow();
@@ -25,7 +27,7 @@ int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
 {
     int cell_alive_neighbors{0};
 
-    // Loop through the neighboring cells
+    // Loop through the neighboring gameboard.at(row).at(col)s
     for (int neighbor_row{row - 1}; neighbor_row <= row + 1; ++neighbor_row)
     {
         if (neighbor_row < 0 || neighbor_row >= static_cast<int>(gameboard.size()))
@@ -47,7 +49,7 @@ int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
     return cell_alive_neighbors;
 }
 
-void update_cell(Cell &cell)
+bool update_cell(const Cell &cell)
 {
     // If cell is alive
     if (cell.is_alive)
@@ -55,8 +57,9 @@ void update_cell(Cell &cell)
         // Cell becomes dead (is_alive = false) if < 2 or > 3 neighbors are alive, otherwise cell state remains the same
         if (cell.alive_neighbors < 2 || cell.alive_neighbors > 3)
         {
-            cell.is_alive = false;
+            return false;
         }
+        return true;
     }
     // If cell is dead
     else
@@ -64,13 +67,16 @@ void update_cell(Cell &cell)
         // Cell becomes alive (is_alive = true) if 3 neighbor cells alive, otherwise cell state remains the same
         if (cell.alive_neighbors == 3)
         {
-            cell.is_alive = true;
+            return true;
         }
+        return false;
     }
 }
 
 void evolve_board(Gameboard &gameboard)
 {
+    Gameboard next_generation_board{gameboard};
+
     std::size_t height{gameboard.size()};
     std::size_t width{gameboard.at(0).size()};
 
@@ -78,9 +84,11 @@ void evolve_board(Gameboard &gameboard)
     {
         for (std::size_t col{0}; col < width; ++col)
         {
-            gameboard.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(gameboard, row, col);
+            // Calculates the number of neighbors alive
+            next_generation_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(next_generation_board, row, col);
 
-            update_cell(gameboard.at(row).at(col));
+            // Updates the board according to the number of neighbors alive
+            gameboard.at(row).at(col).is_alive = update_cell(next_generation_board.at(row).at(col));
         }
     }
 }
@@ -92,38 +100,6 @@ void evolve_board(Gameboard &gameboard)
 //     std::uniform_distribution<int> dist(0, 1); // 0 = false, 1 = true
 // }
 
-// void print_board(const Gameboard &gameboard)
-// {
-//     std::size_t height{gameboard.size()};
-//     std::size_t width{gameboard[0].size()};
-
-//     // Top border line of the board:
-//     for (std::size_t row{0}; row < width + 2; ++row)
-//     {
-//         std::cout << '_';
-//     }
-//     std::cout << '\n';
-
-//     // Middle of the board boarders
-//     for (std::size_t row{0}; row < height; ++row)
-//     {
-//         std::cout << '|'; // left border
-
-//         for (std::size_t col{0}; col < width; ++col)
-//         {
-//             if (gameboard.at(row).at(col).is_alive)
-//             {
-//                 std::cout << 'O'; // O = cell alive/full
-//             }
-//             else
-//             {
-//                 std::cout << ' ';
-//             }
-//         }
-
-//         std::cout << "|\n"; // right border
-//     }
-
 void print_board(const Gameboard &gameboard)
 {
     std::size_t height{gameboard.size()};
@@ -134,7 +110,6 @@ void print_board(const Gameboard &gameboard)
 
     for (std::size_t row{0}; row < height; ++row)
     {
-
         for (std::size_t col{0}; col < width; ++col)
         {
             if (gameboard.at(row).at(col).is_alive)
