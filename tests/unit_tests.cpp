@@ -43,6 +43,7 @@ TEST_CASE("Test cell update functions")
     SUBCASE("Count cell alive neighbors")
     {
         Gameboard gameboard{create_board(15, 15)};
+        gameboard.at(5).at(col).is_alive = true;
         }
 }
 
