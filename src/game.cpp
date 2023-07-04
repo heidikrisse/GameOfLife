@@ -17,7 +17,7 @@ void game_render_loop(Gameboard &gameboard)
         ClearBackground(RAYWHITE);
         print_board(gameboard);
         evolve_board(gameboard);
-        EndDrawing(
+        EndDrawing();
     }
 
     CloseWindow();
@@ -75,7 +75,7 @@ bool update_cell(const Cell &cell)
 
 void evolve_board(Gameboard &gameboard)
 {
-    Gameboard next_generation_board{gameboard};
+    Gameboard copy_of_board{gameboard};
 
     std::size_t height{gameboard.size()};
     std::size_t width{gameboard.at(0).size()};
@@ -84,11 +84,11 @@ void evolve_board(Gameboard &gameboard)
     {
         for (std::size_t col{0}; col < width; ++col)
         {
-            // Calculates the number of neighbors alive
-            next_generation_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(next_generation_board, row, col);
+            // Calculates the number of neighbors alive from the copy, which stays unmodified
+            copy_of_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(copy_of_board, row, col);
 
-            // Updates the board according to the number of neighbors alive
-            gameboard.at(row).at(col).is_alive = update_cell(next_generation_board.at(row).at(col));
+            // Updates the original board according to the number of neighbors alive in the
+            gameboard.at(row).at(col).is_alive = update_cell(copy_of_board.at(row).at(col));
         }
     }
 }
