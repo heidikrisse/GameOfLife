@@ -9,56 +9,33 @@
 // The main in-game loop
 void game_render_loop(Gameboard &gameboard)
 {
-
+    bool game_paused{ false };
     while (!WindowShouldClose())
     {
         // Check for keyboard input P - pause, SPACE - evolve 1 and pause, Q - quit
-        if (IsKeyPressed(KEY_P))
-        {
-            while (!WindowShouldClose)
-            {
-                if (IsKeyPressed(KEY_SPACE))
-                {
-                    evolve_board(gameboard);
-                }
-                if (IsKeyPressed(KEY_P))
-                {
-                    break;
-                }
-                if (IsKeyPressed(KEY_Q))
-                {
-                    return;
-                }
-                draw_one_evolution(gameboard);
-            }
-        }
-        else if (IsKeyPressed(KEY_SPACE))
+        if (IsKeyPressed(KEY_SPACE))
         {
             evolve_board(gameboard);
-            draw_one_evolution(gameboard);
-            while (!WindowShouldClose)
-            {
-                if (IsKeyPressed(KEY_SPACE))
-                {
-                    evolve_board(gameboard);
-                }
-                if (IsKeyPressed(KEY_P))
-                {
-                    break;
-                }
-                if (IsKeyPressed(KEY_Q))
-                {
-                    return;
-                }
-                draw_one_evolution(gameboard);
-            }
+            game_paused = true;
         }
-        else if (IsKeyPressed(KEY_Q))
+        if (IsKeyPressed(KEY_P))
+        {
+            game_paused = !game_paused;
+        }
+        if (IsKeyPressed(KEY_Q))
         {
             return;
         }
-        draw_one_evolution(gameboard);
-        evolve_board(gameboard);
+        if (game_paused)
+        {
+            draw_one_evolution(gameboard);
+        }
+        if (!game_paused)
+        {
+            evolve_board(gameboard);   
+            draw_one_evolution(gameboard);
+            WaitTime(0.5);
+        }
     }
 }
 
@@ -89,7 +66,6 @@ void draw_one_evolution(Gameboard &gameboard)
     DrawText("Q - quit | P - pause | SPACE - step", 10, 10, 10, DARKBLUE);
     print_board(gameboard);
     EndDrawing();
-    WaitTime(0.5);
 }
 
 int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
