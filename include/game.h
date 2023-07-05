@@ -15,7 +15,7 @@ using Gameboard = std::vector<std::vector<Cell>>;
 void game_render_loop(Gameboard &gameboard);
 
 // Pauses the simulation
-void pause_simulation(Gameboard &gameboard);
+// void pause_simulation(Gameboard &gameboard);
 
 // Draws one evolution of the game board
 void draw_one_evolution(Gameboard &gameboard);
@@ -31,6 +31,9 @@ void evolve_board(Gameboard &gameboard);
 
 //Prints out the game board
 void print_board(const Gameboard &gameboard);
+
+//Clears the gameboard
+void clear_gameboard(Gameboard& gameboard);
 
 // Sets default starting pattern on the game board
 void default_starting_pattern(Gameboard &gameboard);

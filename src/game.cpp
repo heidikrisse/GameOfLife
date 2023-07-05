@@ -1,7 +1,7 @@
 #include "game.h"
 #include "constants.h"
 #include "raylib.h"
-#include <algorithm> // for std::copy
+// #include <algorithm> // for std::copy
 #include <iostream>
 #include <vector>
 #include <random>
@@ -9,52 +9,78 @@
 // The main in-game loop
 void game_render_loop(Gameboard &gameboard)
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life");
-
-    SetTargetFPS(30); // FPS = frames per second
 
     while (!WindowShouldClose())
     {
-        //Check for keyboard input P - pause, SPACE - evolve 1 and pause, Q - quit
+        // Check for keyboard input P - pause, SPACE - evolve 1 and pause, Q - quit
         if (IsKeyPressed(KEY_P))
         {
-            pause_simulation(gameboard);
+            while (!WindowShouldClose)
+            {
+                if (IsKeyPressed(KEY_SPACE))
+                {
+                    evolve_board(gameboard);
+                }
+                if (IsKeyPressed(KEY_P))
+                {
+                    break;
+                }
+                if (IsKeyPressed(KEY_Q))
+                {
+                    return;
+                }
+                draw_one_evolution(gameboard);
+            }
         }
         else if (IsKeyPressed(KEY_SPACE))
         {
             evolve_board(gameboard);
             draw_one_evolution(gameboard);
-            pause_simulation(gameboard);
+            while (!WindowShouldClose)
+            {
+                if (IsKeyPressed(KEY_SPACE))
+                {
+                    evolve_board(gameboard);
+                }
+                if (IsKeyPressed(KEY_P))
+                {
+                    break;
+                }
+                if (IsKeyPressed(KEY_Q))
+                {
+                    return;
+                }
+                draw_one_evolution(gameboard);
+            }
         }
         else if (IsKeyPressed(KEY_Q))
         {
-            break;
+            return;
         }
         draw_one_evolution(gameboard);
         evolve_board(gameboard);
     }
-    CloseWindow();
 }
 
-void pause_simulation(Gameboard& gameboard)
-{
-    while (!WindowShouldClose)
-    { 
-        if (IsKeyPressed(KEY_SPACE))
-        {
-            evolve_board(gameboard);
-        }
-        if (IsKeyPressed(KEY_P))
-        {
-            return;
-        }
-        if(IsKeyPressed(KEY_Q))
-        {
-            CloseWindow();
-        }
-        draw_one_evolution(gameboard);
-    }
-}
+// void pause_simulation(Gameboard& gameboard)
+// {
+//     while (!WindowShouldClose)
+//     { 
+//         if (IsKeyPressed(KEY_SPACE))
+//         {
+//             evolve_board(gameboard);
+//         }
+//         if (IsKeyPressed(KEY_P))
+//         {
+//             return;
+//         }
+//         if(IsKeyPressed(KEY_Q))
+//         {
+//             break;
+//         }
+//         draw_one_evolution(gameboard);
+//     }
+// }
 
 void draw_one_evolution(Gameboard &gameboard)
 {
@@ -136,6 +162,17 @@ void evolve_board(Gameboard &gameboard)
     }
 }
 
+void clear_gameboard(Gameboard& gameboard)
+{
+    for (auto& row: gameboard)
+    {
+        for (auto& cell: row)
+        {
+            cell.is_alive = false;
+        }
+    }
+}
+
 void default_starting_pattern(Gameboard &gameboard)
 {
     int width = static_cast<int>(gameboard[0].size());
@@ -155,34 +192,40 @@ void user_defined_starting_pattern(Gameboard &gameboard)
     int board_width{static_cast<int>(gameboard[0].size())};
     int board_height{static_cast<int>(gameboard.size())}; 
     
-    int cell_scale{4};
-
-    //Scale UI
-    InitWindow(board_width*cell_scale, board_height*cell_scale, "Game of Life");
+    int cell_width{SCREEN_WIDTH/board_width};
+    int cell_height{SCREEN_HEIGHT/board_height};
 
     int mouse_x{0};
     int mouse_y{0};
 
-    SetTargetFPS(30); // FPS = frames per second
+    clear_gameboard(gameboard);
 
     while (!WindowShouldClose())
     {
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Q - save & quit", 10, 10, 10, DARKBLUE);
+        print_board(gameboard);
+        EndDrawing();
+        
         mouse_x = GetMouseX();
         mouse_y = GetMouseY();
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             //If mouse position is evenly divisible with cell_scale, subtract one to get correct index
-            if (mouse_x % cell_scale == 0)
+            if (mouse_x % cell_width == 0)
                 {
                     mouse_x -= 1;
                 }
-                if (mouse_y % cell_scale == 0)
+                if (mouse_y % cell_height == 0)
                 {
                     mouse_y -= 1;
                 }
 
-            int row = mouse_x / cell_scale;
-            int col = mouse_y / cell_scale;
+            int row = mouse_x / cell_width;
+            int col = mouse_y / cell_height;
 
             gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
 
@@ -191,16 +234,9 @@ void user_defined_starting_pattern(Gameboard &gameboard)
         {
             break;
         }
-
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawText("Q - save & quit", 10, 10, 10, DARKBLUE);
-        print_board(gameboard);
-        EndDrawing();
-        WaitTime(0.5);
-    
+        
     }
-    CloseWindow();
+    
 }
 
 void randomize_starting_pattern(Gameboard &gameboard)

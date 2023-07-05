@@ -11,7 +11,7 @@ inline constexpr int SCREEN_HEIGHT{1000};
 
 // Menu screen width and height
 inline constexpr int MENU_WIDTH{1000};
-inline constexpr int MENU_HEIGHT{500};
+inline constexpr int MENU_HEIGHT{800};
 
 // Default / demo board width and height
 constexpr int DEFAULT_BOARD_WIDTH{100};
