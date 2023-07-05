@@ -14,9 +14,6 @@ using Gameboard = std::vector<std::vector<Cell>>;
 // The main in-game loop logic
 void game_render_loop(Gameboard &gameboard);
 
-// Pauses the simulation
-void pause_simulation(Gameboard &gameboard);
-
 // Draws one evolution of the game board
 void draw_one_evolution(Gameboard &gameboard);
 
@@ -29,8 +26,11 @@ bool update_cell(const Cell &cell);
 // Evolves the gameboard to the next gameboard generation
 void evolve_board(Gameboard &gameboard);
 
-//Prints out the game board
+// Prints out the game board
 void print_board(const Gameboard &gameboard);
+
+// Clears the gameboard
+void clear_gameboard(Gameboard &gameboard);
 
 // Sets default starting pattern on the game board
 void default_starting_pattern(Gameboard &gameboard);

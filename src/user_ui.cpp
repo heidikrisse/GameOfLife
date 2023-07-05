@@ -8,207 +8,183 @@
 #include <iostream>
 #include <vector>
 
-int input_menu_option_selection(select_option)
-{
-    if (IsKeyPressed(KEY_DOWN))
-    {
-        select_option = (select_option + 1) % 4;
-    }
-    else if (IsKeyPressed(KEY_UP))
-    {
-        select_option = (select_option - 1 + 4) % 4;
-    }
-    else if (IsKeyPressed(KEY_ENTER))
-    {
-        CloseWindow();
-    }
-
-    return select_option;
-}
-
-void draw_selected_option(int select_option)
-{
-    if (select_option == 0)
-    {
-        DrawText("> ", 10, 180, 30, BLACK);
-    }
-    else if (select_option == 1)
-    {
-        DrawText("> ", 10, 230, 30, BLACK);
-    }
-    else if (select_option == 2)
-    {
-        DrawText("> ", 10, 280, 30, BLACK);
-    }
-    else if (select_option == 3)
-    {
-        DrawText("> ", 10, 330, 30, BLACK);
-    }
-}
-
-void input_boardsize_selection(int &board_width, int &board_height)
-{
-    // Adjust board width with down/up arrows:
-    if (IsKeyPressed(KEY_DOWN))
-    {
-        if (board_width > MIN_BOARD_WIDTH)
-            --board_width;
-    }
-    else if (IsKeyPressed(KEY_UP))
-    {
-        if (board_width < MAX_BOARD_WIDTH)
-            ++board_width;
-    }
-
-    // Adjust board height with right/left arrows
-    else if (IsKeyPressed(KEY_RIGHT))
-    {
-        if (board_height < MAX_BOARD_HEIGHT)
-            ++board_height;
-    }
-    else if (IsKeyPressed(KEY_LEFT))
-    {
-        if (board_height > MIN_BOARD_HEIGHT)
-            --board_height;
-    }
-}
-
 // Game main menu
 void main_menu()
 {
-    InitWindow(MENU_WIDTH, MENU_HEIGHT, "Game of Life - Main Menu");
-    SetTargetFPS(40);
+    Gameboard gameboard{create_board(DEFAULT_BOARD_WIDTH, DEFAULT_BOARD_HEIGHT)};
+
+    default_starting_pattern(gameboard);
+
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life - Main Menu");
+    SetTargetFPS(30);
+
+    int mouse_x{0};
+    int mouse_y{0};
 
     int board_width{DEFAULT_BOARD_WIDTH};
     int board_height{DEFAULT_BOARD_HEIGHT};
+
     bool default_size{true};
-    bool default_pattern{true};
+
+    // 0 = default, 1 = random, 2 = custom
+    int current_pattern{0};
 
     int select_option{0};
 
     while (!WindowShouldClose())
     {
+        mouse_x = GetMouseX();
+        mouse_y = GetMouseY();
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        // START
-        // CHANGE BOARD SIZE
-        // CHANGE PATTERN
-        // QUIT
-
-        // CURRENT SETTINGS:
-        // BOARD SIZE : XX x XX
-        // PATTERN : RANDOM
-
-        // Tekstien paikkaa ja fonttia voi muuttaa (ensimmäinen nro on leveys, toinen korkeus ja kolmas on fonttikoko, jos haluaa fonttikoon voisi laittaa myös constants.h-tiedostoon esim FONT_HEADER, FONT_TEXT osv.ja se kolmannen numeron tilalle)
+        // Header
         DrawText("Game of Life - Main Menu", 10, 10, 40, BLACK);
-        /*DrawText("Choose an option:", 10, 100, 30, BLACK);
-        DrawText("1. Start with default board size", 30, 180, 30, BLACK);
-        DrawText("2. Start with custom board size", 30, 230, 30, BLACK);
-        DrawText("3. Use default pattern", 30, 280, 30, BLACK);
-        DrawText("4. Use random pattern", 30, 330, 30, BLACK); */
 
-        // Draws "> " symbol to the selected option(s)
-        draw_selected_option(select_option);
-
-        EndDrawing();
-
-        select_option = input_menu_option_selection(select_option);
-    }
-
-    if (select_option == 1)
-    {
-        default_size = false;
-        CloseWindow();
-    }
-    else if (select_option == 2)
-    {
-        default_size = false;
-        get_user_input_boardsize(board_width, board_height);
-        CloseWindow();
-    }
-    else if (select_option == 3)
-    {
-        default_pattern = true;
-        CloseWindow();
-    }
-    else if (select_option == 4)
-    {
-        default_pattern = false;
-        CloseWindow();
-    }
-
-    // Creates a gameboard of defined board size (either user defined or default)
-    Gameboard gameboard{create_board(board_width, board_height)};
-
-    if (!default_pattern)
-    {
-        // Set randomized starting pattern
-        randomize_starting_pattern(gameboard);
-    }
-    else
-    {
-        // Set default starting pattern
-        default_starting_pattern(gameboard);
-    }
-
-    game_render_loop(gameboard);
-}
-
-void get_user_input_boardsize_selection(int &board_width, int &board_height)
-{
-    InitWindow(MENU_WIDTH, MENU_HEIGHT, "Game of Life - User Input");
-    SetTargetFPS(40);
-
-    bool default_size{true};
-
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        // Display title and options
-        DrawText("Game of Life - Board Size Selection", 10, 10, 40, BLACK); // first numbers are the coordinates (10, 10) and last number is font size (30)
-        DrawText("Choose an option:", 10, 100, 30, BLACK);
-        DrawText("1. Use default board size", 30, 180, 30, BLACK);
-        DrawText("2. Specify board size", 30, 230, 30, BLACK);
-
-        if (default_size)
+        // Start
+        if (mouse_y >= 180 && mouse_y < 230)
         {
-            DrawText("> ", 10, 180, 30, BLACK); // arrow to the same height as the options
+            DrawText("Start", 30, 180, 30, RED);
+            DrawText("> ", 10, 180, 30, RED); // color changes to red when mouse on top of the option
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                EndDrawing();
+                game_render_loop(gameboard);
+            }
         }
         else
         {
-            DrawText("> ", 10, 230, 30, BLACK);
+            DrawText("Start", 30, 180, 30, BLACK);
+        }
+
+        // Change board size
+        if (mouse_y >= 230 && mouse_y < 280)
+        {
+            DrawText("Change board size", 30, 230, 30, RED);
+            DrawText("> ", 10, 230, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                EndDrawing();
+                change_board_size_menu(gameboard, board_width, board_height);
+            }
+        }
+        else
+        {
+            DrawText("Change board size", 30, 230, 30, BLACK);
+        }
+
+        // Change pattern
+        if (mouse_y >= 280 && mouse_y < 330)
+        {
+            DrawText("Change pattern", 30, 280, 30, RED);
+            DrawText("> ", 10, 280, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                EndDrawing();
+                current_pattern = get_user_input_pattern(gameboard);
+            }
+        }
+        else
+        {
+            DrawText("Change pattern", 30, 280, 30, BLACK);
+        }
+
+        // Quit
+        if (mouse_y > 330 && mouse_y < 380)
+        {
+            DrawText("Quit", 30, 330, 30, RED);
+            DrawText("> ", 10, 330, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                break;
+            }
+        }
+        else
+        {
+            DrawText("Quit", 30, 330, 30, BLACK);
+        }
+
+        DrawText("Current settings:", 30, 530, 30, GRAY);
+        DrawText("Board size:", 30, 580, 30, GRAY);
+        DrawText(std::to_string(board_width).c_str(), 400, 580, 30, GRAY);
+        DrawText("x", 450, 580, 30, GRAY);
+        DrawText(std::to_string(board_height).c_str(), 500, 580, 30, GRAY);
+        DrawText("Board pattern:", 30, 630, 30, GRAY);
+        if (current_pattern == 0)
+        {
+            DrawText("default", 400, 630, 30, GRAY);
+        }
+        if (current_pattern == 1)
+        {
+            DrawText("random", 400, 630, 30, GRAY);
+        }
+        if (current_pattern == 2)
+        {
+            DrawText("custom", 400, 630, 30, GRAY);
         }
 
         EndDrawing();
+    }
 
-        // Check if user has pressed either up/down arrow
-        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN))
+    CloseWindow();
+}
+
+// Function to prompt user to confirm the user wants to change the board size
+void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height)
+{
+    int mouse_x{0};
+    int mouse_y{0};
+
+    while (!WindowShouldClose())
+    {
+        mouse_x = GetMouseX();
+        mouse_y = GetMouseY();
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawText("Changing board size will erase current pattern!", 30, 230, 30, BLACK);
+        DrawText("Continue?", 30, 280, 30, BLACK);
+
+        // yes
+        if (mouse_y >= 330 && mouse_y < 380) // yes option
         {
-            default_size = !default_size;
-        }
-        // Check if user has hit enter
-        else if (IsKeyPressed(KEY_ENTER))
-        {
-            // If default board size is used
-            if (default_size)
+            DrawText("Yes", 30, 330, 30, RED);
+            DrawText("> ", 10, 330, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                board_width = DEFAULT_BOARD_WIDTH;
-                board_height = DEFAULT_BOARD_HEIGHT;
+                EndDrawing();
+                get_user_input_boardsize(board_width, board_height);
+                break;
             }
-            CloseWindow();
         }
+        else
+        {
+            DrawText("Yes", 30, 330, 30, BLACK);
+        }
+
+        // no
+        if (mouse_y >= 380 && mouse_y < 430) // no option
+        {
+            DrawText("No", 30, 380, 30, RED);
+            DrawText("> ", 10, 380, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                break;
+            }
+        }
+        else
+        {
+            DrawText("No", 30, 380, 30, BLACK);
+        }
+        EndDrawing();
     }
 }
 
 void get_user_input_boardsize(int &board_width, int &board_height)
 {
-    InitWindow(MENU_WIDTH, MENU_HEIGHT, "Game of Life - Board Size Selection");
-    SetTargetFPS(40);
-
-    while (!WindowShouldClose)
+    while (!WindowShouldClose())
     {
         BeginDrawing();
 
@@ -216,8 +192,8 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
         // Display the title and board size inputs
         DrawText("Game of Life - Set Width and Height", 10, 10, 40, BLACK);
-        DrawText("Enter board width (10-100):", 10, 100, 30, BLACK);
-        DrawText("Enter board height (10-100):", 10, 150, 30, BLACK);
+        DrawText("Enter board width (10-333):", 10, 100, 30, BLACK);
+        DrawText("Enter board height (10-333):", 10, 150, 30, BLACK);
 
         DrawText(std::to_string(board_width).c_str(), 480, 100, 30, BLACK); // same height as the enter text but little bit more right
         DrawText(std::to_string(board_height).c_str(), 480, 150, 30, BLACK);
@@ -237,56 +213,112 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         {
             if (board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT)
             {
-                CloseWindow();
                 break;
             }
         }
     }
 }
 
-void get_user_input_pattern(bool &random_pattern)
+void input_boardsize_selection(int &board_width, int &board_height)
 {
-    InitWindow(MENU_WIDTH, MENU_HEIGHT, "Game of Life - Pattern Selection");
-    SetTargetFPS(40);
-
-    bool default_pattern{true};
-    bool is_running{true};
-
-    while (is_running)
+    // Adjust board width with down/up arrows:
+    if (IsKeyDown(KEY_DOWN))
     {
+        if (board_width > MIN_BOARD_WIDTH)
+            --board_width;
+    }
+    else if (IsKeyDown(KEY_UP))
+    {
+        if (board_width < MAX_BOARD_WIDTH)
+            ++board_width;
+    }
+
+    // Adjust board height with right/left arrows
+    else if (IsKeyDown(KEY_RIGHT))
+    {
+        if (board_height < MAX_BOARD_HEIGHT)
+            ++board_height;
+    }
+    else if (IsKeyDown(KEY_LEFT))
+    {
+        if (board_height > MIN_BOARD_HEIGHT)
+            --board_height;
+    }
+}
+
+int get_user_input_pattern(Gameboard &gameboard)
+{
+    int mouse_y{0};
+    int mouse_x{0};
+
+    int current_pattern{0};
+
+    while (!WindowShouldClose())
+    {
+        mouse_y = GetMouseY();
+        mouse_x = GetMouseX();
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        DrawText("Game of Life - Pattern Selection", 10, 10, 40, BLACK);
-        DrawText("Choose an option:", 10, 100, 30, BLACK);
-        DrawText("1. Use default pattern", 30, 180, 30, BLACK);
-        DrawText("2. Randomize pattern", 30, 230, 30, BLACK);
+        DrawText("Pattern Selection", 10, 10, 40, BLACK);
 
-        if (default_pattern)
+        // Use default pattern
+        if (mouse_y >= 180 && mouse_y < 230) // use default
         {
-            DrawText("> ", 10, 180, 30, BLACK);
+            DrawText("Use default pattern", 30, 180, 30, RED);
+            DrawText("> ", 10, 180, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                current_pattern = 0;
+                default_starting_pattern(gameboard);
+                EndDrawing();
+                break;
+            }
         }
         else
         {
-            DrawText("> ", 10, 230, 30, BLACK);
+            DrawText("Use default pattern", 30, 180, 30, BLACK);
+        }
+
+        // Use random pattern
+        if (mouse_y >= 230 && mouse_y < 280) // use random
+        {
+            DrawText("Use random pattern", 30, 230, 30, RED);
+            DrawText("> ", 10, 230, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                current_pattern = 1;
+                randomize_starting_pattern(gameboard);
+                EndDrawing();
+                break;
+            }
+        }
+        else
+        {
+            DrawText("Use random pattern", 30, 230, 30, BLACK);
+        }
+
+        // Create custom pattern
+        if (mouse_y >= 280 && mouse_y < 330)
+        {
+            DrawText("Create custom pattern", 30, 280, 30, RED);
+            DrawText("> ", 10, 280, 30, RED);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                current_pattern = 2;
+                user_defined_starting_pattern(gameboard);
+                EndDrawing();
+                break;
+            }
+        }
+        else
+        {
+            DrawText("Create custom pattern", 30, 280, 30, BLACK);
         }
 
         EndDrawing();
-
-        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN))
-        {
-            default_pattern = !default_pattern;
-        }
-        else if (IsKeyPressed(KEY_ENTER))
-        {
-            is_running = false;
-        }
     }
 
-    if (!default_pattern)
-    {
-        random_pattern = true;
-    }
-
-    CloseWindow();
+    return current_pattern;
 }

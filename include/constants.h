@@ -7,7 +7,7 @@
 
 // Game screen width and height
 inline constexpr int SCREEN_WIDTH{1000};
-inline constexpr int SCREEN_HEIGHT{1000};
+inline constexpr int SCREEN_HEIGHT{800};
 
 // Menu screen width and height
 inline constexpr int MENU_WIDTH{1000};
@@ -24,5 +24,8 @@ constexpr int MAX_BOARD_HEIGHT{333};
 // Min board width and height
 constexpr int MIN_BOARD_WIDTH{10};
 constexpr int MIN_BOARD_HEIGHT{10};
+
+// Margin for displaying instruction text (quit, step, play/pause)
+constexpr int CONTROL_MARGIN{10};
 
 #endif
