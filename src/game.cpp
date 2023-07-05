@@ -6,61 +6,64 @@
 #include <vector>
 #include <random>
 
-// TODO: pause (p) / step (väli) ei toimi vielä (q = quit toimii) - saatava joku ajallinen viive!
-// TODO: marginit, jotta tekstit näkyvät
-void game_render_loop(Gameboard &gameboard, bool random_pattern)
+// The main in-game loop
+void game_render_loop(Gameboard &gameboard)
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life");
 
-    SetTargetFPS(40); // FPS = frames per second
-
-    bool paused{false};
-    bool step{false};
-
-    if (random_pattern)
-    {
-        // Set randomized starting pattern
-        randomize_starting_pattern(gameboard);
-    }
-    else
-    {
-        // Set default starting pattern
-        default_starting_pattern(gameboard);
-    }
+    SetTargetFPS(30); // FPS = frames per second
 
     while (!WindowShouldClose())
     {
+        //Check for keyboard input P - pause, SPACE - evolve 1 and pause, Q - quit
         if (IsKeyPressed(KEY_P))
         {
-            paused = !paused;
+            pause_simulation(gameboard);
         }
         else if (IsKeyPressed(KEY_SPACE))
         {
-            step = true;
+            evolve_board(gameboard);
+            draw_one_evolution(gameboard);
+            pause_simulation(gameboard);
         }
         else if (IsKeyPressed(KEY_Q))
         {
             break;
         }
-
-        if (!paused || step)
-        {
-            draw_one_evolution(gameboard);
-            step = false;
-        }
+        draw_one_evolution(gameboard);
+        evolve_board(gameboard);
     }
-
     CloseWindow();
+}
+
+void pause_simulation(Gameboard& gameboard)
+{
+    while (!WindowShouldClose)
+    { 
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            evolve_board(gameboard);
+        }
+        if (IsKeyPressed(KEY_P))
+        {
+            return;
+        }
+        if(IsKeyPressed(KEY_Q))
+        {
+            CloseWindow();
+        }
+        draw_one_evolution(gameboard);
+    }
 }
 
 void draw_one_evolution(Gameboard &gameboard)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawText("Q - quit | P - pause | SPACE - step", 10, 10, 10, DARKGRAY);
+    DrawText("Q - quit | P - pause | SPACE - step", 10, 10, 10, DARKBLUE);
     print_board(gameboard);
-    evolve_board(gameboard);
     EndDrawing();
+    WaitTime(0.5);
 }
 
 int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
@@ -133,31 +136,71 @@ void evolve_board(Gameboard &gameboard)
     }
 }
 
-// TODO: Katso vielä tarkemmin miten järjevä laittaa että ei heti pysähdy tiettyyn tilaan, ota huomioon ettei mene out of range
 void default_starting_pattern(Gameboard &gameboard)
 {
     int width = static_cast<int>(gameboard[0].size());
     int height = static_cast<int>(gameboard.size());
 
-    if (width >= 11 && height >= 9)
+    int middle_height = height / 2;
+    int middle_width = width / 2;
+
+    gameboard.at(middle_width - 1).at(middle_height).is_alive = true;
+    gameboard.at(middle_width).at(middle_height).is_alive = true;
+    gameboard.at(middle_width + 1).at(middle_height).is_alive = true;
+}
+
+void user_defined_starting_pattern(Gameboard &gameboard)
+{
+    //Check board width and height, or number of cells
+    int board_width{static_cast<int>(gameboard[0].size())};
+    int board_height{static_cast<int>(gameboard.size())}; 
+    
+    int cell_scale{4};
+
+    //Scale UI
+    InitWindow(board_width*cell_scale, board_height*cell_scale, "Game of Life");
+
+    int mouse_x{0};
+    int mouse_y{0};
+
+    SetTargetFPS(30); // FPS = frames per second
+
+    while (!WindowShouldClose())
     {
-        gameboard.at(8).at(10).is_alive = true;
-        gameboard.at(9).at(10).is_alive = true;
-        gameboard.at(10).at(10).is_alive = true;
+        mouse_x = GetMouseX();
+        mouse_y = GetMouseY();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            //If mouse position is evenly divisible with cell_scale, subtract one to get correct index
+            if (mouse_x % cell_scale == 0)
+                {
+                    mouse_x -= 1;
+                }
+                if (mouse_y % cell_scale == 0)
+                {
+                    mouse_y -= 1;
+                }
+
+            int row = mouse_x / cell_scale;
+            int col = mouse_y / cell_scale;
+
+            gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
+
+        }
+        if (IsKeyPressed(KEY_Q))
+        {
+            break;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Q - save & quit", 10, 10, 10, DARKBLUE);
+        print_board(gameboard);
+        EndDrawing();
+        WaitTime(0.5);
+    
     }
-    // TODO: Keksi parempi kuvio, joka ei heti pysähdy paikoilleen
-    else if (width >= 4 && height >= 4)
-    {
-        // gameboard.at(0).at(0).is_alive = true;
-        gameboard.at(0).at(1).is_alive = true;
-        gameboard.at(1).at(0).is_alive = true;
-        gameboard.at(0).at(2).is_alive = true;
-        gameboard.at(2).at(3).is_alive = true;
-    }
-    else
-    {
-        gameboard.at(0).at(0).is_alive = true;
-    }
+    CloseWindow();
 }
 
 void randomize_starting_pattern(Gameboard &gameboard)
@@ -177,11 +220,11 @@ void randomize_starting_pattern(Gameboard &gameboard)
 
 void print_board(const Gameboard &gameboard)
 {
-    int height{static_cast<int>(gameboard.size())};
-    int width{static_cast<int>(gameboard[0].size())};
+    int width{static_cast<int>(gameboard[0].size())}; // number of cells
+    int height{static_cast<int>(gameboard.size())}; // number of cells
 
-    int scaled_width{SCREEN_WIDTH / static_cast<int>(width)};
-    int scaled_height{SCREEN_HEIGHT / static_cast<int>(height)};
+    int cell_width{SCREEN_WIDTH / width}; //size of displayed cell in pix
+    int cell_height{SCREEN_HEIGHT / height};
 
     for (int row{0}; row < height; ++row)
     {
@@ -189,7 +232,7 @@ void print_board(const Gameboard &gameboard)
         {
             if (gameboard.at(row).at(col).is_alive)
             {
-                DrawRectangle(row * scaled_width, col * scaled_height, scaled_width - 1, scaled_height - 1, BLACK);
+                DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BLACK);
             }
         }
     }
@@ -197,12 +240,10 @@ void print_board(const Gameboard &gameboard)
 
 Gameboard create_board(int board_width, int board_height)
 {
-    if (board_width <= 0 || board_width > 100 || board_height <= 0 || board_height > 100)
+    if (board_width <= MIN_BOARD_WIDTH || board_width > MAX_BOARD_WIDTH || board_height <= MIN_BOARD_HEIGHT || board_height > MAX_BOARD_WIDTH)
     {
         board_width = DEFAULT_BOARD_WIDTH;
         board_height = DEFAULT_BOARD_HEIGHT;
-
-        std::cout << "Creating a default gameboard " << DEFAULT_BOARD_WIDTH << "x" << DEFAULT_BOARD_HEIGHT << "...\n";
     }
 
     Gameboard gameboard(board_height, std::vector<Cell>(board_width));

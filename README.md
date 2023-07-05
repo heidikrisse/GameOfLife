@@ -18,7 +18,9 @@ Once the game board is initialized, you can choose one of the following options:
 
 ## Dependencies
 
--Termbox2
+- Raylib
+
+To install Raylib ... 
 
 ## Build Project
 
@@ -47,5 +49,5 @@ make
 ## Run Unit Tests
 
 ```shell
-./tests/unit_tests_results
+../tests/unit_tests_results
 ```
