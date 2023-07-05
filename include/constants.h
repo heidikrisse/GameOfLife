@@ -6,8 +6,8 @@
 #define CONSTANTS_H
 
 // Game screen width and height
-inline constexpr int SCREEN_WIDTH{1000};
-inline constexpr int SCREEN_HEIGHT{1000};
+inline constexpr int SCREEN_WIDTH{800};
+inline constexpr int SCREEN_HEIGHT{800};
 
 // Menu screen width and height
 inline constexpr int MENU_WIDTH{1000};

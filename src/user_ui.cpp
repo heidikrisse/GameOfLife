@@ -141,7 +141,7 @@ void change_board_size_menu(Gameboard& gameboard, int& board_width, int& board_h
     int mouse_x{0};
     int mouse_y{0};
     
-    while (!WindowShouldClose)
+    while (!WindowShouldClose())
     {
         mouse_x = GetMouseX();
         mouse_y = GetMouseY();
@@ -161,6 +161,7 @@ void change_board_size_menu(Gameboard& gameboard, int& board_width, int& board_h
             {
                 EndDrawing();
                 get_user_input_boardsize(board_width, board_height);
+                break;
             }
         }
         if (mouse_y >= 380 && mouse_y < 430) // no option
