@@ -51,6 +51,7 @@ void main_menu()
 
     int board_width{DEFAULT_BOARD_WIDTH};
     int board_height{DEFAULT_BOARD_HEIGHT};
+    int current_pattern = 0;
 
     while (!WindowShouldClose())
     {
@@ -99,26 +100,27 @@ void main_menu()
         // BOARD SIZE : XXX x XXX
         // PATTERN : RANDOM
         DrawText("Current settings:", 30, 500, TITLE_FONTSIZE, GRAY);
-            DrawText("Board size:", 30, 560, ITEM_FONTSIZE, GRAY);
-            DrawText(std::to_string(board_width).c_str(), 320, 560, ITEM_FONTSIZE, GRAY);
-            DrawText("x", 300, 580, 30, GRAY);
-            DrawText(std::to_string(board_height).c_str(), 420, 560, ITEM_FONTSIZE, GRAY);
-            DrawText("Board pattern:", 30, 630, ITEM_FONTSIZE, GRAY);
-            if (current_pattern == 0)
-            {
-                DrawText("default", 320, 630, ITEM_FONTSIZE, GRAY);
-                break;
-            }
-            if (current_pattern == 1)
-            {
-                DrawText("random", 320, 630, ITEM_FONTSIZE, GRAY);
-                break;
-            }
-            if (current_pattern == 2)
-            {
-                DrawText("custom", 320, 630, ITEM_FONTSIZE, GRAY);
-                break;
-            }
+        DrawText("Board size:", 30, 560, ITEM_FONTSIZE, GRAY);
+        DrawText(std::to_string(board_width).c_str(), 320, 560, ITEM_FONTSIZE, GRAY);
+        DrawText("x", 300, 580, 30, GRAY);
+        DrawText(std::to_string(board_height).c_str(), 420, 560, ITEM_FONTSIZE, GRAY);
+        DrawText("Board pattern:", 30, 630, ITEM_FONTSIZE, GRAY);
+        switch (current_pattern)
+        if (current_pattern == 0)
+        {
+            DrawText("default", 320, 630, ITEM_FONTSIZE, GRAY);
+            break;
+        }
+        if (current_pattern == 1)
+        {
+            DrawText("random", 320, 630, ITEM_FONTSIZE, GRAY);
+            break;
+        }
+        if (current_pattern == 2)
+        {
+            DrawText("custom", 320, 630, ITEM_FONTSIZE, GRAY);
+            break;
+        }
 
             EndDrawing();
         }
