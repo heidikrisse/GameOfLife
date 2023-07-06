@@ -262,7 +262,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         ClearBackground(RAYWHITE);
         // Display the title and board size inputs
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
-        DrawTextEx(text_font, "Enter board size (10-250):", Vector2{10.0, 200.0}, 30, 0, BLACK);
+        DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 200.0}, 30, 0, BLACK);
 
         DrawRectangleRec(text_box, WHITE);
         if (mouse_on_text)
@@ -283,7 +283,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
                 // Draw blinking underscore char
                 if ((frames_counter / 20) % 2 == 0)
                 {
-                    DrawTextEx(text_font, "_", Vector2{static_cast<float>(text_box_x + 5 + MeasureText(board_size_input, 40)), static_cast<float>(text_box_y)}, 40.0f, 0.0f, BLACK);
+                    DrawTextEx(text_font, "_", Vector2{static_cast<float>(text_box_x + 10 + MeasureText(board_size_input, 40)), static_cast<float>(text_box_y)}, 40.0f, 0.0f, BLACK);
                 }
             }
         }
@@ -302,7 +302,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         board_height = board_width;
 
         // Choose the board size with arrow keys:
-       // input_boardsize_selection(board_width, board_height);
+        // input_boardsize_selection(board_width, board_height);
 
         // If user hits enter, go back to main menu
         if (IsKeyPressed(KEY_ENTER))

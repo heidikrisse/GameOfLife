@@ -45,7 +45,7 @@ void draw_one_evolution(Gameboard &gameboard)
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step", Vector2{10.0f, 10.0f}, 18.0f, 0.0f, DARKBLUE);
     print_board(gameboard);
     EndDrawing();
 }

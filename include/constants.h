@@ -21,8 +21,8 @@ constexpr int MAX_BOARD_WIDTH{250};
 constexpr int MAX_BOARD_HEIGHT{250};
 
 // Min board width and height
-constexpr int MIN_BOARD_WIDTH{10};
-constexpr int MIN_BOARD_HEIGHT{10};
+constexpr int MIN_BOARD_WIDTH{20};
+constexpr int MIN_BOARD_HEIGHT{20};
 
 // Margin for displaying instruction text (quit, step, play/pause)
 constexpr int CONTROL_MARGIN{10};
