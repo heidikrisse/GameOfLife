@@ -194,18 +194,18 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 {
     Font text_font{LoadFont(FONT.c_str())};
 
-    int text_box_x{480};
-    int text_box_y{200};
-    int text_box_width{150};
+    int text_box_x{350};
+    int text_box_y{350};
+    int text_box_width{120};
     int text_box_height{30};
 
     Rectangle text_box{static_cast<float>(text_box_x), static_cast<float>(text_box_y), static_cast<float>(text_box_width), static_cast<float>(text_box_height)};
     bool mouse_on_text{false};
+    bool text_box_clicked{false};
 
     const int max_input_numbers{3};
     char board_size_input[max_input_numbers + 1]{"\0"}; // One extra space required for null terminator
     int letter_count{0};
-    int frames_counter{0};
 
     while (!WindowShouldClose())
     {
@@ -219,11 +219,27 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             mouse_on_text = false;
         }
 
+        if (mouse_on_text && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            text_box_clicked = true;
+        }
+        if (!mouse_on_text && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            text_box_clicked = false;
+        }
+
         if (mouse_on_text)
         {
             // Set the mouse cursor to an I-beam
             SetMouseCursor(MOUSE_CURSOR_IBEAM);
+        }
+        else
+        {
+            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        }
 
+        if (text_box_clicked)
+        {
             // Get char pressed on the queue
             int key{GetCharPressed()};
 
@@ -244,27 +260,31 @@ void get_user_input_boardsize(int &board_width, int &board_height)
                 board_size_input[letter_count] = '\0';
             }
         }
-        else
-        {
-            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-        }
-        if (mouse_on_text)
-        {
-            ++frames_counter;
-        }
-        else
-        {
-            frames_counter = 0;
-        }
+
+        board_width = atoi(board_size_input);
+        board_height = board_width;
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
         // Display the title and board size inputs
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
-        DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 200.0}, 30, 0, BLACK);
+        DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 350.0}, 30, 0, BLACK);
 
-        DrawRectangleRec(text_box, WHITE);
+        bool accepted_size{board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT};
+        if (!accepted_size && text_box_clicked)
+        {
+            DrawRectangleRec(text_box, YELLOW);
+        }
+        if (board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT && text_box_clicked)
+        {
+            DrawRectangleRec(text_box, GREEN);
+        }
+        else
+        {
+            DrawRectangleRec(text_box, WHITE);
+        }
+
         if (mouse_on_text)
         {
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, BLACK);
@@ -276,17 +296,13 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         DrawTextEx(text_font, board_size_input, Vector2{static_cast<float>(text_box_x), static_cast<float>(text_box_y)}, 30, 0, BLACK);
         // DrawTextEx("Enter board height (10-333):", 10, 150, 30, BLACK);
 
-        if (mouse_on_text)
-        {
-            if (letter_count < max_input_numbers)
-            {
-                // Draw blinking underscore char
-                if ((frames_counter / 20) % 2 == 0)
-                {
-                    DrawTextEx(text_font, "_", Vector2{static_cast<float>(text_box_x + 10 + MeasureText(board_size_input, 40)), static_cast<float>(text_box_y)}, 40.0f, 0.0f, BLACK);
-                }
-            }
-        }
+        // if (mouse_on_text)
+        // {
+        //     if (letter_count < max_input_numbers)
+        //     {
+
+        //     }
+        // }
 
         // DrawTextEx(text_font, std::to_string(board_width).c_str(), Vector2{480, 200}, 30, 0, BLACK); // same height as the enter text but little bit more right
         // DrawTextEx(text_font, "x", Vector2{540, 200}, 30, 0, BLACK);
@@ -296,12 +312,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         // DrawTextEx(text_font, "Use UP/DOWN arrow keys to adjust side size", Vector2{10, 350}, 20, 0, BLACK);
         DrawTextEx(text_font, "Press ENTER to confirm the board size", Vector2{10, 410}, 20, 0, BLACK);
 
-        EndDrawing();
-
-        board_width = atoi(board_size_input);
-        board_height = board_width;
-
-        // Choose the board size with arrow keys:
+        EndDrawing(); // Choose the board size with arrow keys:
         // input_boardsize_selection(board_width, board_height);
 
         // If user hits enter, go back to main menu
