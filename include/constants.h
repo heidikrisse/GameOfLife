@@ -24,4 +24,11 @@ constexpr int MIN_BOARD_HEIGHT{10};
 // Margin for displaying instruction text (quit, step, play/pause)
 constexpr int CONTROL_MARGIN{10};
 
+enum Pattern
+{
+    default_pattern,
+    random_pattern,
+    custom_pattern
+};
+
 #endif

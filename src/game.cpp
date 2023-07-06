@@ -131,15 +131,17 @@ void clear_gameboard(Gameboard &gameboard)
 
 void default_starting_pattern(Gameboard &gameboard)
 {
+    clear_gameboard(gameboard);
+
     int width = static_cast<int>(gameboard[0].size());
     int height = static_cast<int>(gameboard.size());
 
-    int middle_height = height / 2;
-    int middle_width = width / 2;
+    int mh {height / 2}; // middle height
+    int mw {width / 2}; // middle width
 
-    gameboard.at(middle_width - 1).at(middle_height).is_alive = true;
-    gameboard.at(middle_width).at(middle_height).is_alive = true;
-    gameboard.at(middle_width + 1).at(middle_height).is_alive = true;
+    gameboard.at(mw - 1).at(mh).is_alive = true;
+    gameboard.at(MW).at(MH).is_alive = true;
+    gameboard.at(MW + 1).at(MH).is_alive = true;
 }
 
 void user_defined_starting_pattern(Gameboard &gameboard)

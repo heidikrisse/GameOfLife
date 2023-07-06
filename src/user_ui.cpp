@@ -2,7 +2,7 @@
 #include "user_ui.h"
 #include "raylib.h"
 #include "game.h"
-#include "constants.h"
+
 
 #include <string>
 #include <iostream>
@@ -27,9 +27,9 @@ void main_menu()
     bool default_size{true};
 
     // 0 = default, 1 = random, 2 = custom
-    int current_pattern{0};
+    Pattern current_pattern{default_pattern};
 
-    int select_option{0};
+    //int select_option{0};
 
     while (!WindowShouldClose())
     {
@@ -66,7 +66,7 @@ void main_menu()
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 EndDrawing();
-                change_board_size_menu(gameboard, board_width, board_height);
+                change_board_size_menu(gameboard, board_width, board_height, current_pattern);
             }
         }
         else
@@ -111,15 +111,15 @@ void main_menu()
         DrawText("x", 462, 580, 30, GRAY);
         DrawText(std::to_string(board_height).c_str(), 500, 580, 30, GRAY);
         DrawText("Board pattern:", 30, 630, 30, GRAY);
-        if (current_pattern == 0)
+        if (current_pattern == default_pattern)
         {
             DrawText("default", 400, 630, 30, GRAY);
         }
-        if (current_pattern == 1)
+        if (current_pattern == random_pattern)
         {
             DrawText("random", 400, 630, 30, GRAY);
         }
-        if (current_pattern == 2)
+        if (current_pattern == custom_pattern)
         {
             DrawText("custom", 400, 630, 30, GRAY);
         }
@@ -131,7 +131,7 @@ void main_menu()
 }
 
 // Function to prompt user to confirm the user wants to change the board size
-void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height)
+void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height, Pattern& current_pattern)
 {
     int mouse_x{0};
     int mouse_y{0};
@@ -157,6 +157,8 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
                 EndDrawing();
                 get_user_input_boardsize(board_width, board_height);
                 gameboard = create_board(board_width, board_height);
+                default_starting_pattern(gameboard);
+                current_pattern = default_pattern;
                 break;
             }
         }
@@ -241,12 +243,12 @@ void input_boardsize_selection(int &board_width, int &board_height)
     }
 }
 
-int get_user_input_pattern(Gameboard &gameboard)
+Pattern get_user_input_pattern(Gameboard &gameboard)
 {
     int mouse_y{0};
     int mouse_x{0};
 
-    int current_pattern{0};
+    Pattern current_pattern{default_pattern};
 
     while (!WindowShouldClose())
     {
@@ -265,7 +267,7 @@ int get_user_input_pattern(Gameboard &gameboard)
             DrawText("> ", 10, 180, 30, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                current_pattern = 0;
+                current_pattern = default_pattern;
                 default_starting_pattern(gameboard);
                 EndDrawing();
                 break;
@@ -283,7 +285,7 @@ int get_user_input_pattern(Gameboard &gameboard)
             DrawText("> ", 10, 230, 30, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                current_pattern = 1;
+                current_pattern = random_pattern;
                 randomize_starting_pattern(gameboard);
                 EndDrawing();
                 break;
@@ -301,7 +303,7 @@ int get_user_input_pattern(Gameboard &gameboard)
             DrawText("> ", 10, 280, 30, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                current_pattern = 2;
+                current_pattern = custom_pattern;
                 user_defined_starting_pattern(gameboard);
                 EndDrawing();
                 break;
