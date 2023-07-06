@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 
+// Function counts number of cell neighbors alive
 int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
 {
     int cell_alive_neighbors{0};
@@ -58,8 +59,10 @@ bool update_cell(const Cell &cell)
     }
 }
 
+// Function makes an evolution on the board
 void evolve_board(Gameboard &gameboard)
 {
+    // make copy of gameboard
     Gameboard copy_of_board{gameboard};
 
     int height{static_cast<int>(gameboard.size())};

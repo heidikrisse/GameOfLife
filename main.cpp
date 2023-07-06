@@ -6,6 +6,7 @@
 
 int main()
 {
+    // Create gameboard and set default starting pattern as default
     Gameboard gameboard{create_board(DEFAULT_BOARD_WIDTH, DEFAULT_BOARD_HEIGHT)};
 
     default_starting_pattern(gameboard);
@@ -26,10 +27,9 @@ int main()
     // 0 = default, 1 = random, 2 = custom
     Pattern current_pattern{default_pattern};
 
-    // int select_option{0};
-
     while (!WindowShouldClose())
     {
+        // Get mouse position
         mouse_x = GetMouseX();
         mouse_y = GetMouseY();
 
@@ -103,6 +103,7 @@ int main()
             DrawTextEx(text_font, "Quit", Vector2{30, 330}, 30, 0, BLACK);
         }
 
+        // Draw current settings
         DrawTextEx(text_font, "Current settings:", Vector2{30, 530}, 30, 0, GRAY);
         DrawTextEx(text_font, "Board size:", Vector2{30, 580}, 30, 0, GRAY);
         DrawTextEx(text_font, std::to_string(board_width).c_str(), Vector2{400, 580}, 30, 0, GRAY);

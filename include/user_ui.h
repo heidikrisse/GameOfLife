@@ -18,7 +18,7 @@ Pattern get_user_input_pattern(Gameboard &gameboard);
 void game_render_loop(Gameboard &gameboard);
 
 // Draws one evolution of the game board
-void draw_one_evolution(Gameboard &gameboard);
+void draw_one_evolution(Gameboard &gameboard, bool pride_mode);
 
 // Prints out the game board
 void print_board(const Gameboard &gameboard);

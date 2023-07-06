@@ -9,7 +9,11 @@
 
 void game_render_loop(Gameboard &gameboard)
 {
+    // Pause state, modifying initial value changes the starting state
     bool game_paused{true};
+    // Speed state, toggle between 0.5s and 0.1s
+    bool faster_loop{false};
+    bool pride_mode{false};
     while (!WindowShouldClose())
     {
         // Check for keyboard input P - play/pause, SPACE - evolve 1 and pause, Q - quit
@@ -22,38 +26,115 @@ void game_render_loop(Gameboard &gameboard)
         {
             game_paused = !game_paused;
         }
+        if (IsKeyPressed(KEY_S))
+        {
+            faster_loop = !faster_loop;
+        }
         if (IsKeyPressed(KEY_Q))
         {
             return;
         }
+        if (IsKeyPressed(KEY_R))
+        {
+            pride_mode = !pride_mode;
+        }
         if (game_paused)
         {
-            draw_one_evolution(gameboard);
+            draw_one_evolution(gameboard, pride_mode);
         }
         if (!game_paused)
         {
             evolve_board(gameboard);
-            draw_one_evolution(gameboard);
-            WaitTime(0.5);
+            draw_one_evolution(gameboard, pride_mode);
+
+            if (!faster_loop)
+            {
+                WaitTime(0.5);
+            }
+            else
+            {
+                WaitTime(0.1);
+            }
         }
     }
 }
 
+// Print board to screen
 void print_board(const Gameboard &gameboard)
 {
-    float width{static_cast<float>(gameboard[0].size())}; // number of cells
-    float height{static_cast<float>(gameboard.size())};   // number of cells
+    float width{static_cast<float>(gameboard[0].size())}; // number of rows cast to float
+    float height{static_cast<float>(gameboard.size())};   // number of cells cast to float
 
     float cell_width{static_cast<float>(SCREEN_WIDTH) / width}; // size of displayed cell in pix
     float cell_height{static_cast<float>(SCREEN_HEIGHT) / height};
 
-    for (int row{0}; row < height; ++row)
+    for (int row{0}; row < width; ++row)
     {
-        for (int col{0}; col < width; ++col)
+        for (int col{0}; col < height; ++col)
         {
             if (gameboard.at(row).at(col).is_alive)
             {
+                // Draw a rectangle to screen, and leave one pixel empty as a border on right side and down
                 DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BLACK);
+            }
+        }
+    }
+}
+
+void rainbow_mode(const Gameboard &gameboard)
+{
+    float width{static_cast<float>(gameboard[0].size())}; // number of rows cast to float
+    float height{static_cast<float>(gameboard.size())};   // number of cells cast to float
+
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / width}; // size of displayed cell in pix
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / height};
+
+    int rainbow_color{0};
+
+    for (int row{0}; row < width; ++row)
+    {
+        for (int col{0}; col < height; ++col)
+        {
+            if (gameboard.at(row).at(col).is_alive)
+            {
+                switch (rainbow_color)
+                {
+                case 0:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, RED);
+                    break;
+                case 1:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, ORANGE);
+                    break;
+                case 2:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, YELLOW);
+                    break;
+                case 3:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, GREEN);
+                    break;
+                case 4:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, PINK);
+                    break;
+                case 5:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, VIOLET);
+                    break;
+                case 6:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BROWN);
+                    break;
+                case 7:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BLUE);
+                    break;
+                default:
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, GRAY);
+                    break;
+                }
+                if (rainbow_color == 7)
+                {
+                    rainbow_color = 0;
+                }
+                else
+                {
+                    ++rainbow_color;
+                }
             }
         }
     }
@@ -79,8 +160,13 @@ void user_defined_starting_pattern(Gameboard &gameboard)
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        // Display instructions in the upper-left corner of the board
         DrawTextEx(text_font, "Q - save & quit", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
+
+        // Draw gameboard
         print_board(gameboard);
+
         EndDrawing();
 
         mouse_x = GetMouseX();
@@ -101,6 +187,7 @@ void user_defined_starting_pattern(Gameboard &gameboard)
             int row = static_cast<float>(mouse_x) / cell_width;
             int col = static_cast<float>(mouse_y) / cell_height;
 
+            // Toggle the state of the cell
             gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
         }
         if (IsKeyPressed(KEY_Q))
@@ -110,14 +197,26 @@ void user_defined_starting_pattern(Gameboard &gameboard)
     }
 }
 
-void draw_one_evolution(Gameboard &gameboard)
+void draw_one_evolution(Gameboard &gameboard, bool pride_mode)
 {
     Font text_font{LoadFont(FONT.c_str())};
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step", Vector2{10.0f, 10.0f}, 18.0f, 0.0f, DARKBLUE);
-    print_board(gameboard);
+
+    // Display instructions
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step | S - toggle speed | R - rainbow mode", Vector2{10.0f, 10.0f}, 18.0f, 0.0f, DARKBLUE);
+
+    if (pride_mode)
+    {
+        rainbow_mode(gameboard);
+    }
+    else
+    {
+        // Print gameboard
+        print_board(gameboard);
+    }
+
     EndDrawing();
 }
 
@@ -137,21 +236,28 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        // Display confirmation message
         DrawTextEx(text_font, "Changing board size will erase current pattern!", Vector2{30, 230}, 30, 0, BLACK);
         DrawTextEx(text_font, "Continue?", Vector2{30, 280}, 30, 0, BLACK);
 
         // yes
-        if (mouse_y >= 330 && mouse_y < 380) // yes option
+        if (mouse_y >= 330 && mouse_y < 380)
         {
             DrawTextEx(text_font, "Yes", Vector2{30, 330}, 30, 0, RED);
             DrawTextEx(text_font, "> ", Vector2{10, 330}, 30, 0, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 EndDrawing();
+
+                // Get user input for the new board size
                 get_user_input_boardsize(board_width, board_height);
+                // Create a new gameboard with the new size
                 gameboard = create_board(board_width, board_height);
+                // Set the default starting pattern always after changing the gameboard size
                 default_starting_pattern(gameboard);
+                // Reset the current pattern to default
                 current_pattern = default_pattern;
+
                 break;
             }
         }
@@ -161,7 +267,7 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
         }
 
         // no
-        if (mouse_y >= 380 && mouse_y < 430) // no option
+        if (mouse_y >= 380 && mouse_y < 430)
         {
             DrawTextEx(text_font, "No", Vector2{30, 380}, 30, 0, RED);
             DrawTextEx(text_font, "> ", Vector2{10, 380}, 30, 0, RED);
@@ -188,7 +294,8 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     int text_box_width{120};
     int text_box_height{30};
 
-    Rectangle text_box{static_cast<float>(text_box_x), static_cast<float>(text_box_y), static_cast<float>(text_box_width), static_cast<float>(text_box_height)};
+    Rectangle text_box{static_cast<float>(text_box_x), static_cast<float>(text_box_y),
+                       static_cast<float>(text_box_width), static_cast<float>(text_box_height)};
     bool mouse_on_text{false};
     bool text_box_clicked{false};
 
@@ -198,7 +305,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
     while (!WindowShouldClose())
     {
-
+        // Check if the mouse is on the text box
         if (CheckCollisionPointRec(GetMousePosition(), text_box))
         {
             mouse_on_text = true;
@@ -208,6 +315,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             mouse_on_text = false;
         }
 
+        // Check if the text box is clicked
         if (mouse_on_text && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             text_box_clicked = true;
@@ -217,6 +325,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             text_box_clicked = false;
         }
 
+        // Set the mouse cursor based on whether it's on the text box or not
         if (mouse_on_text)
         {
             // Set the mouse cursor to an I-beam
@@ -243,6 +352,8 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
                 key = GetCharPressed();
             }
+
+            // Handle backspace
             if (IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)
             {
                 --letter_count;
@@ -250,16 +361,19 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             }
         }
 
+        // Convert the input for integers for board width and height
         board_width = atoi(board_size_input);
         board_height = board_width;
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
+
         // Display the title and board size inputs
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
         DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 350.0}, 30, 0, BLACK);
 
+        // Highlight the text box based on if the input is valid (green) or not (red)
         if (accepted_size(board_width, board_height) && text_box_clicked)
         {
             DrawRectangleRec(text_box, GREEN);
@@ -273,6 +387,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             DrawRectangleRec(text_box, WHITE);
         }
 
+        // Draw reactangle lines for the text box
         if (mouse_on_text)
         {
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, BLACK);

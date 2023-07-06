@@ -8,6 +8,7 @@ In the game main menu, you have the following options:
 
 - Use the default demo game board size.
 - Specify the game board size.
+    * Changing the size of the gameboard sets the default starting pattern
 
 - Use default pattern
 - Use random pattern
@@ -15,10 +16,12 @@ In the game main menu, you have the following options:
 
 Once the game is started, you can choose one of the following options:
 
-- Play: The game will continuously evolve the game board until you choose to stop.
-- Pause: Pause the game at the current generation.
-- Step: The game will evolve the game board one generation at a time.
-- Quit: Returns the game's main menu.
+- P - Play: The game will continuously evolve the game board until you choose to stop.
+- P - Pause: Pause the game at the current generation.
+- SPACE - Step: The game will evolve the game board one generation at a time.
+- S - Toggle speed: Switches the speed of evolutions between 0,5 - 0,1 seconds.
+- R - Rainbow mode: Changes the color of the cell into rainbow colors
+- Q - Quit: Returns the game's main menu.
 
 ## Dependencies
 
