@@ -209,11 +209,11 @@ void randomize_starting_pattern(Gameboard &gameboard)
 
 void print_board(const Gameboard &gameboard)
 {
-    int width{static_cast<int>(gameboard[0].size())}; // number of cells
-    int height{static_cast<int>(gameboard.size())};   // number of cells
+    float width{static_cast<float>(gameboard[0].size())}; // number of cells
+    float height{static_cast<float>(gameboard.size())};   // number of cells
 
-    int cell_width{SCREEN_WIDTH / width}; // size of displayed cell in pix
-    int cell_height{SCREEN_HEIGHT / height};
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / width}; // size of displayed cell in pix
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / height};
 
     for (int row{0}; row < height; ++row)
     {
@@ -229,7 +229,7 @@ void print_board(const Gameboard &gameboard)
 
 Gameboard create_board(int board_width, int board_height)
 {
-    if (board_width <= MIN_BOARD_WIDTH || board_width > MAX_BOARD_WIDTH || board_height <= MIN_BOARD_HEIGHT || board_height > MAX_BOARD_WIDTH)
+    if (board_width < MIN_BOARD_WIDTH || board_width > MAX_BOARD_WIDTH || board_height < MIN_BOARD_HEIGHT || board_height > MAX_BOARD_WIDTH)
     {
         board_width = DEFAULT_BOARD_WIDTH;
         board_height = DEFAULT_BOARD_HEIGHT;

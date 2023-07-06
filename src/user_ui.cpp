@@ -108,7 +108,7 @@ void main_menu()
         DrawText("Current settings:", 30, 530, 30, GRAY);
         DrawText("Board size:", 30, 580, 30, GRAY);
         DrawText(std::to_string(board_width).c_str(), 400, 580, 30, GRAY);
-        DrawText("x", 450, 580, 30, GRAY);
+        DrawText("x", 462, 580, 30, GRAY);
         DrawText(std::to_string(board_height).c_str(), 500, 580, 30, GRAY);
         DrawText("Board pattern:", 30, 630, 30, GRAY);
         if (current_pattern == 0)
@@ -156,6 +156,7 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
             {
                 EndDrawing();
                 get_user_input_boardsize(board_width, board_height);
+                gameboard = create_board(board_width, board_height);
                 break;
             }
         }
@@ -191,24 +192,24 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         ClearBackground(RAYWHITE);
 
         // Display the title and board size inputs
-        DrawText("Game of Life - Set Width and Height", 10, 10, 40, BLACK);
-        DrawText("Enter board width (10-333):", 10, 100, 30, BLACK);
-        DrawText("Enter board height (10-333):", 10, 150, 30, BLACK);
+        DrawText("Game of Life - Set Board Size", 10, 10, 40, BLACK);
+        DrawText("Enter board size (10-250):", 10, 200, 30, BLACK);
+        // DrawText("Enter board height (10-333):", 10, 150, 30, BLACK);
 
-        DrawText(std::to_string(board_width).c_str(), 480, 100, 30, BLACK); // same height as the enter text but little bit more right
-        DrawText(std::to_string(board_height).c_str(), 480, 150, 30, BLACK);
+        DrawText(std::to_string(board_width).c_str(), 480, 200, 30, BLACK); // same height as the enter text but little bit more right
+        DrawText("x", 540, 200, 30, BLACK);
+        DrawText(std::to_string(board_height).c_str(), 575, 200, 30, BLACK);
 
         // Instructions for the user:
-        DrawText("Use UP/DOWN arrow keys to adjust width", 10, 250, 20, BLACK);
-        DrawText("Use LEFT/RIGHT arrow keys to adjust height", 10, 280, 20, BLACK);
-        DrawText("Press ENTER to confirm the board size", 10, 310, 20, BLACK);
+        DrawText("Use UP/DOWN arrow keys to adjust side size", 10, 350, 20, BLACK);
+        DrawText("Press ENTER to confirm the board size", 10, 410, 20, BLACK);
 
         EndDrawing();
 
         // Choose the board size with arrow keys:
         input_boardsize_selection(board_width, board_height);
 
-        // If user hits enter, close the window
+        // If user hits enter, go back to main menu
         if (IsKeyPressed(KEY_ENTER))
         {
             if (board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT)
@@ -221,28 +222,22 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
 void input_boardsize_selection(int &board_width, int &board_height)
 {
-    // Adjust board width with down/up arrows:
+    // Adjust board width and height with down/up arrows:
     if (IsKeyDown(KEY_DOWN))
     {
-        if (board_width > MIN_BOARD_WIDTH)
+        if (board_width > MIN_BOARD_WIDTH && board_height > MIN_BOARD_HEIGHT)
+        {
+            --board_height;
             --board_width;
+        }
     }
     else if (IsKeyDown(KEY_UP))
     {
-        if (board_width < MAX_BOARD_WIDTH)
+        if (board_width < MAX_BOARD_WIDTH && board_height < MAX_BOARD_HEIGHT)
+        {
             ++board_width;
-    }
-
-    // Adjust board height with right/left arrows
-    else if (IsKeyDown(KEY_RIGHT))
-    {
-        if (board_height < MAX_BOARD_HEIGHT)
             ++board_height;
-    }
-    else if (IsKeyDown(KEY_LEFT))
-    {
-        if (board_height > MIN_BOARD_HEIGHT)
-            --board_height;
+        }
     }
 }
 
