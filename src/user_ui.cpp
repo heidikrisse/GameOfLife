@@ -328,6 +328,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             }
         }
     }
+    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
 void input_boardsize_selection(int &board_width, int &board_height)

@@ -14,7 +14,7 @@ Once the game board is initialized, you can choose one of the following options:
 - Play: The game will continuously evolve the game board until you choose to stop.
 - Pause: Pause the game at the current generation.
 - Step: The game will evolve the game board one generation at a time.
-- Exit: Exit the game.
+- : Exit the game.
 
 ## Dependencies
 
