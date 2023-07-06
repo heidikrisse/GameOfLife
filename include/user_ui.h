@@ -10,6 +10,8 @@ void main_menu();
 // Function to prompt user to confirm the user wants to change the board size
 void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height, Pattern& current_pattern);
 
+bool accepted_size(int board_size);
+
 // Function to get user input for the board size
 void get_user_input_boardsize(int &board_width, int &board_height);
 

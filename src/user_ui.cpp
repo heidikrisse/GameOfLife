@@ -190,6 +190,11 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
     }
 }
 
+bool accepted_size(int board_size)
+{
+    return board_size >= MIN_BOARD_WIDTH && board_size <= MAX_BOARD_WIDTH && board_size >= MIN_BOARD_HEIGHT && board_size <= MAX_BOARD_HEIGHT;
+}
+
 void get_user_input_boardsize(int &board_width, int &board_height)
 {
     Font text_font{LoadFont(FONT.c_str())};
@@ -271,14 +276,13 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
         DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 350.0}, 30, 0, BLACK);
 
-        bool accepted_size{board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT};
-        if (!accepted_size && text_box_clicked)
-        {
-            DrawRectangleRec(text_box, YELLOW);
-        }
-        if (board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT && text_box_clicked)
+        if (accepted_size(board_width) && text_box_clicked)
         {
             DrawRectangleRec(text_box, GREEN);
+        }
+        else if (!accepted_size(board_width) && text_box_clicked)
+        {
+            DrawRectangleRec(text_box, RED);
         }
         else
         {
@@ -318,7 +322,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         // If user hits enter, go back to main menu
         if (IsKeyPressed(KEY_ENTER))
         {
-            if (board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH && board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT)
+            if (accepted_size(board_width))
             {
                 break;
             }
