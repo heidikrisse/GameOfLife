@@ -4,23 +4,27 @@ A simple implementation of Conway's Game of Life game.
 
 ## How to play
 
-The game starts with an empty game board. You have the following options:
+In the game main menu, you have the following options:
 
-1. Use the default demo game board size.
-2. Specify the game board size.
+- Use the default demo game board size.
+- Specify the game board size.
 
-Once the game board is initialized, you can choose one of the following options:
+- Use default pattern
+- Use random pattern
+- Custom pattern
+
+Once the game is started, you can choose one of the following options:
 
 - Play: The game will continuously evolve the game board until you choose to stop.
 - Pause: Pause the game at the current generation.
 - Step: The game will evolve the game board one generation at a time.
-- : Exit the game.
+- Quit: Returns the game's main menu.
 
 ## Dependencies
 
 - Raylib
 
-To install Raylib ... 
+To install Raylib visit the site: https://github.com/raysan5/raylib and follow the instructions.  
 
 ## Build Project
 
