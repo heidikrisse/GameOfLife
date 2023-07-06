@@ -176,11 +176,11 @@ void user_defined_starting_pattern(Gameboard &gameboard)
     Font text_font{LoadFont(FONT.c_str())};
 
     // Check board width and height, or number of cells
-    int board_width{static_cast<int>(gameboard[0].size())};
-    int board_height{static_cast<int>(gameboard.size())};
+    float board_width{static_cast<float>(gameboard[0].size())};
+    float board_height{static_cast<float>(gameboard.size())};
 
-    int cell_width{SCREEN_WIDTH / board_width};
-    int cell_height{SCREEN_HEIGHT / board_height};
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / board_width};
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / board_height};
 
     int mouse_x{0};
     int mouse_y{0};
@@ -201,17 +201,17 @@ void user_defined_starting_pattern(Gameboard &gameboard)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             // If mouse position is evenly divisible with cell_scale, subtract one to get correct index
-            if (mouse_x % cell_width == 0)
+            if (mouse_x % static_cast<int>(cell_width) == 0)
             {
                 mouse_x -= 1;
             }
-            if (mouse_y % cell_height == 0)
+            if (mouse_y % static_cast<int>(cell_height) == 0)
             {
                 mouse_y -= 1;
             }
 
-            int row = mouse_x / cell_width;
-            int col = mouse_y / cell_height;
+            int row = static_cast<float>(mouse_x) / cell_width;
+            int col = static_cast<float>(mouse_y) / cell_height;
 
             gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
         }
