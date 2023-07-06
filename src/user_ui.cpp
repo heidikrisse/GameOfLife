@@ -264,7 +264,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
         DrawTextEx(text_font, "Enter board size (10-250):", Vector2{10.0, 200.0}, 30, 0, BLACK);
 
-        DrawRectangleRec(text_box, LIGHTGRAY);
+        DrawRectangleRec(text_box, WHITE);
         if (mouse_on_text)
         {
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, BLACK);
@@ -283,7 +283,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
                 // Draw blinking underscore char
                 if ((frames_counter / 20) % 2 == 0)
                 {
-                    DrawTextEx(text_font, "_", Vector2{static_cast<float>(text_box_x + MeasureText(board_size_input, 40)), static_cast<float>(text_box_y + 1)}, 40.0f, 0.0f, BLACK);
+                    DrawTextEx(text_font, "_", Vector2{static_cast<float>(text_box_x + 5 + MeasureText(board_size_input, 40)), static_cast<float>(text_box_y)}, 40.0f, 0.0f, BLACK);
                 }
             }
         }
