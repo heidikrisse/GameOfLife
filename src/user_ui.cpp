@@ -9,7 +9,7 @@
 
 void game_render_loop(Gameboard &gameboard)
 {
-    bool game_paused{false};
+    bool game_paused{true};
     while (!WindowShouldClose())
     {
         // Check for keyboard input P - play/pause, SPACE - evolve 1 and pause, Q - quit
