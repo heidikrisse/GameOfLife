@@ -7,130 +7,118 @@
 #include <iostream>
 #include <vector>
 
-// Game main menu
-void main_menu()
+void game_render_loop(Gameboard &gameboard)
 {
-    Gameboard gameboard{create_board(DEFAULT_BOARD_WIDTH, DEFAULT_BOARD_HEIGHT)};
+    bool game_paused{false};
+    while (!WindowShouldClose())
+    {
+        // Check for keyboard input P - play/pause, SPACE - evolve 1 and pause, Q - quit
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            evolve_board(gameboard);
+            game_paused = true;
+        }
+        if (IsKeyPressed(KEY_P))
+        {
+            game_paused = !game_paused;
+        }
+        if (IsKeyPressed(KEY_Q))
+        {
+            return;
+        }
+        if (game_paused)
+        {
+            draw_one_evolution(gameboard);
+        }
+        if (!game_paused)
+        {
+            evolve_board(gameboard);
+            draw_one_evolution(gameboard);
+            WaitTime(0.5);
+        }
+    }
+}
 
-    default_starting_pattern(gameboard);
+void print_board(const Gameboard &gameboard)
+{
+    float width{static_cast<float>(gameboard[0].size())}; // number of cells
+    float height{static_cast<float>(gameboard.size())};   // number of cells
 
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life - Main Menu");
-    SetTargetFPS(30);
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / width}; // size of displayed cell in pix
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / height};
 
+    for (int row{0}; row < height; ++row)
+    {
+        for (int col{0}; col < width; ++col)
+        {
+            if (gameboard.at(row).at(col).is_alive)
+            {
+                DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BLACK);
+            }
+        }
+    }
+}
+
+void user_defined_starting_pattern(Gameboard &gameboard)
+{
     Font text_font{LoadFont(FONT.c_str())};
+
+    // Check board width and height, or number of cells
+    float board_width{static_cast<float>(gameboard[0].size())};
+    float board_height{static_cast<float>(gameboard.size())};
+
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / board_width};
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / board_height};
 
     int mouse_x{0};
     int mouse_y{0};
 
-    int board_width{DEFAULT_BOARD_WIDTH};
-    int board_height{DEFAULT_BOARD_HEIGHT};
-
-    bool default_size{true};
-
-    // 0 = default, 1 = random, 2 = custom
-    Pattern current_pattern{default_pattern};
-
-    // int select_option{0};
+    clear_gameboard(gameboard);
 
     while (!WindowShouldClose())
     {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawTextEx(text_font, "Q - save & quit", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
+        print_board(gameboard);
+        EndDrawing();
+
         mouse_x = GetMouseX();
         mouse_y = GetMouseY();
 
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        // Header
-        // DrawTextEx(fontti, "nimi", Vector2{x-koordinaatti, y-koordinaatti}, fontin koko, kirjaintyyli [0 = oletuskirjaintyyli], väri)
-        DrawTextEx(text_font, "Game of Life - Main Menu", Vector2{10, 10}, 40, 0, BLACK);
-
-        // Start
-        if (mouse_y >= 180 && mouse_y < 230)
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            DrawTextEx(text_font, "Start", Vector2{30, 180}, 30, 0, RED);
-            DrawTextEx(text_font, "> ", Vector2{10, 180}, 30, 0, RED); // color changes to red when mouse on top of the option
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            // If mouse position is evenly divisible with cell_scale, subtract one to get correct index
+            if (mouse_x % static_cast<int>(cell_width) == 0)
             {
-                EndDrawing();
-                game_render_loop(gameboard);
+                mouse_x -= 1;
             }
-        }
-        else
-        {
-            DrawTextEx(text_font, "Start", Vector2{30, 180}, 30, 0, BLACK);
-        }
-
-        // Change board size
-        if (mouse_y >= 230 && mouse_y < 280)
-        {
-            DrawTextEx(text_font, "Change board size", Vector2{30, 230}, 30, 0, RED);
-            DrawTextEx(text_font, "> ", Vector2{10, 230}, 30, 0, RED);
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if (mouse_y % static_cast<int>(cell_height) == 0)
             {
-                EndDrawing();
-                change_board_size_menu(gameboard, board_width, board_height, current_pattern);
+                mouse_y -= 1;
             }
-        }
-        else
-        {
-            DrawTextEx(text_font, "Change board size", Vector2{30, 230}, 30, 0, BLACK);
-        }
 
-        // Change pattern
-        if (mouse_y >= 280 && mouse_y < 330)
-        {
-            DrawTextEx(text_font, "Change pattern", Vector2{30, 280}, 30, 0, RED);
-            DrawTextEx(text_font, "> ", Vector2{10, 280}, 30, 0, RED);
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            {
-                EndDrawing();
-                current_pattern = get_user_input_pattern(gameboard);
-            }
-        }
-        else
-        {
-            DrawTextEx(text_font, "Change pattern", Vector2{30, 280}, 30, 0, BLACK);
-        }
+            int row = static_cast<float>(mouse_x) / cell_width;
+            int col = static_cast<float>(mouse_y) / cell_height;
 
-        // Quit
-        if (mouse_y > 330 && mouse_y < 380)
-        {
-            DrawTextEx(text_font, "Quit", Vector2{30, 330}, 30, 0, RED);
-            DrawTextEx(text_font, "> ", Vector2{10, 330}, 30, 0, RED);
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            {
-                break;
-            }
+            gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
         }
-        else
+        if (IsKeyPressed(KEY_Q))
         {
-            DrawTextEx(text_font, "Quit", Vector2{30, 330}, 30, 0, BLACK);
+            break;
         }
-
-        DrawTextEx(text_font, "Current settings:", Vector2{30, 530}, 30, 0, GRAY);
-        DrawTextEx(text_font, "Board size:", Vector2{30, 580}, 30, 0, GRAY);
-        DrawTextEx(text_font, std::to_string(board_width).c_str(), Vector2{400, 580}, 30, 0, GRAY);
-        DrawTextEx(text_font, "x", Vector2{462, 580}, 30, 0, GRAY);
-        DrawTextEx(text_font, std::to_string(board_height).c_str(), Vector2{500, 580}, 30, 0, GRAY);
-        DrawTextEx(text_font, "Board pattern:", Vector2{30, 630}, 30, 0, GRAY);
-        if (current_pattern == default_pattern)
-        {
-            DrawTextEx(text_font, "default", Vector2{400, 630}, 30, 0, GRAY);
-        }
-        if (current_pattern == random_pattern)
-        {
-            DrawTextEx(text_font, "random", Vector2{400, 630}, 30, 0, GRAY);
-        }
-        if (current_pattern == custom_pattern)
-        {
-            DrawTextEx(text_font, "custom", Vector2{400, 630}, 30, 0, GRAY);
-        }
-
-        EndDrawing();
     }
+}
 
-    UnloadFont(text_font);
-    CloseWindow();
+void draw_one_evolution(Gameboard &gameboard)
+{
+    Font text_font{LoadFont(FONT.c_str())};
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step", Vector2{10.0f, 10.0f}, 18.0f, 0.0f, DARKBLUE);
+    print_board(gameboard);
+    EndDrawing();
 }
 
 // Function to prompt user to confirm the user wants to change the board size
@@ -190,11 +178,7 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
     }
 }
 
-bool accepted_size(int board_size)
-{
-    return board_size >= MIN_BOARD_WIDTH && board_size <= MAX_BOARD_WIDTH && board_size >= MIN_BOARD_HEIGHT && board_size <= MAX_BOARD_HEIGHT;
-}
-
+// Function to get user input for the board size (width x height)
 void get_user_input_boardsize(int &board_width, int &board_height)
 {
     Font text_font{LoadFont(FONT.c_str())};
@@ -276,11 +260,11 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
         DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 350.0}, 30, 0, BLACK);
 
-        if (accepted_size(board_width) && text_box_clicked)
+        if (accepted_size(board_width, board_height) && text_box_clicked)
         {
             DrawRectangleRec(text_box, GREEN);
         }
-        else if (!accepted_size(board_width) && text_box_clicked)
+        else if (!accepted_size(board_width, board_height) && text_box_clicked)
         {
             DrawRectangleRec(text_box, RED);
         }
@@ -298,31 +282,15 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, GRAY);
         }
         DrawTextEx(text_font, board_size_input, Vector2{static_cast<float>(text_box_x), static_cast<float>(text_box_y)}, 30, 0, BLACK);
-        // DrawTextEx("Enter board height (10-333):", 10, 150, 30, BLACK);
 
-        // if (mouse_on_text)
-        // {
-        //     if (letter_count < max_input_numbers)
-        //     {
-
-        //     }
-        // }
-
-        // DrawTextEx(text_font, std::to_string(board_width).c_str(), Vector2{480, 200}, 30, 0, BLACK); // same height as the enter text but little bit more right
-        // DrawTextEx(text_font, "x", Vector2{540, 200}, 30, 0, BLACK);
-        // DrawTextEx(text_font, std::to_string(board_height).c_str(), Vector2{575, 200}, 30, 0, BLACK);
-
-        // Instructions for the user:
-        // DrawTextEx(text_font, "Use UP/DOWN arrow keys to adjust side size", Vector2{10, 350}, 20, 0, BLACK);
         DrawTextEx(text_font, "Press ENTER to confirm the board size", Vector2{10, 410}, 20, 0, BLACK);
 
-        EndDrawing(); // Choose the board size with arrow keys:
-        // input_boardsize_selection(board_width, board_height);
+        EndDrawing();
 
         // If user hits enter, go back to main menu
         if (IsKeyPressed(KEY_ENTER))
         {
-            if (accepted_size(board_width))
+            if (accepted_size(board_width, board_height))
             {
                 break;
             }
@@ -331,27 +299,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
-void input_boardsize_selection(int &board_width, int &board_height)
-{
-    // Adjust board width and height with down/up arrows:
-    if (IsKeyDown(KEY_DOWN))
-    {
-        if (board_width > MIN_BOARD_WIDTH && board_height > MIN_BOARD_HEIGHT)
-        {
-            --board_height;
-            --board_width;
-        }
-    }
-    else if (IsKeyDown(KEY_UP))
-    {
-        if (board_width < MAX_BOARD_WIDTH && board_height < MAX_BOARD_HEIGHT)
-        {
-            ++board_width;
-            ++board_height;
-        }
-    }
-}
-
+// Function to choose pattern (default, randomized or custom)
 Pattern get_user_input_pattern(Gameboard &gameboard)
 {
     Font text_font{LoadFont(FONT.c_str())};

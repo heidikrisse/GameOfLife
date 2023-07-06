@@ -24,9 +24,6 @@ constexpr int MAX_BOARD_HEIGHT{250};
 constexpr int MIN_BOARD_WIDTH{20};
 constexpr int MIN_BOARD_HEIGHT{20};
 
-// Margin for displaying instruction text (quit, step, play/pause)
-constexpr int CONTROL_MARGIN{10};
-
 enum Pattern
 {
     default_pattern,
