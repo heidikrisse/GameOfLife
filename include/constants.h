@@ -4,6 +4,9 @@
  * */
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
+#include "raylib.h"
+
+#include <string>
 
 // Game screen width and height
 inline constexpr int SCREEN_WIDTH{800};
@@ -23,5 +26,15 @@ constexpr int MIN_BOARD_HEIGHT{10};
 
 // Margin for displaying instruction text (quit, step, play/pause)
 constexpr int CONTROL_MARGIN{10};
+
+enum Pattern
+{
+    default_pattern,
+    random_pattern,
+    custom_pattern
+};
+
+// Font
+const std::string FONT{"../fonts/VT323-Regular.ttf"};
 
 #endif

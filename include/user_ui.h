@@ -1,13 +1,14 @@
 #ifndef USER_UI_H
 #define USER_UI_H
 #include "game.h"
+#include "constants.h"
 #include <string>
 
 // Game main menu
 void main_menu();
 
 // Function to prompt user to confirm the user wants to change the board size
-void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height);
+void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height, Pattern& current_pattern);
 
 // Function to get user input for the board size
 void get_user_input_boardsize(int &board_width, int &board_height);
@@ -16,6 +17,6 @@ void get_user_input_boardsize(int &board_width, int &board_height);
 void input_boardsize_selection(int &board_width, int &board_height);
 
 // Function to choose pattern (default, randomized or custom)
-int get_user_input_pattern(Gameboard &gameboard);
+Pattern get_user_input_pattern(Gameboard &gameboard);
 
 #endif
