@@ -41,9 +41,11 @@ void game_render_loop(Gameboard &gameboard)
 
 void draw_one_evolution(Gameboard &gameboard)
 {
+    Font text_font{LoadFont(FONT.c_str())};
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawText("Q - quit | P - play/pause | SPACE - step", CONTROL_MARGIN, CONTROL_MARGIN, 10, DARKBLUE);
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
     print_board(gameboard);
     EndDrawing();
 }
@@ -136,16 +138,43 @@ void default_starting_pattern(Gameboard &gameboard)
     int width = static_cast<int>(gameboard[0].size());
     int height = static_cast<int>(gameboard.size());
 
-    int mh {height / 2}; // middle height
-    int mw {width / 2}; // middle width
+    int mh{height / 2}; // middle height
+    int mw{width / 2};  // middle width
 
-    gameboard.at(mw - 1).at(mh).is_alive = true;
-    gameboard.at(MW).at(MH).is_alive = true;
-    gameboard.at(MW + 1).at(MH).is_alive = true;
+    gameboard.at(mw - 6).at(mh).is_alive = true;
+    gameboard.at(mw - 6).at(mh + 1).is_alive = true;
+    gameboard.at(mw - 5).at(mh).is_alive = true;
+    gameboard.at(mw - 5).at(mh + 1).is_alive = true;
+    gameboard.at(mw - 3).at(mh - 1).is_alive = true;
+    gameboard.at(mw - 3).at(mh).is_alive = true;
+    gameboard.at(mw - 3).at(mh + 1).is_alive = true;
+    gameboard.at(mw - 3).at(mh + 2).is_alive = true;
+    gameboard.at(mw - 2).at(mh - 2).is_alive = true;
+    gameboard.at(mw - 2).at(mh - 1).is_alive = true;
+    gameboard.at(mw - 2).at(mh + 2).is_alive = true;
+    gameboard.at(mw - 2).at(mh + 3).is_alive = true;
+    gameboard.at(mw - 1).at(mh - 3).is_alive = true;
+    gameboard.at(mw - 1).at(mh + 4).is_alive = true;
+    gameboard.at(mw + 1).at(mh - 3).is_alive = true;
+    gameboard.at(mw + 1).at(mh + 4).is_alive = true;
+    gameboard.at(mw + 2).at(mh - 3).is_alive = true;
+    gameboard.at(mw + 2).at(mh - 1).is_alive = true;
+    gameboard.at(mw + 2).at(mh + 2).is_alive = true;
+    gameboard.at(mw + 2).at(mh + 4).is_alive = true;
+    gameboard.at(mw + 3).at(mh).is_alive = true;
+    gameboard.at(mw + 3).at(mh + 1).is_alive = true;
+    gameboard.at(mw + 4).at(mh).is_alive = true;
+    gameboard.at(mw + 4).at(mh + 1).is_alive = true;
+    gameboard.at(mw + 5).at(mh - 2).is_alive = true;
+    gameboard.at(mw + 5).at(mh - 1).is_alive = true;
+    gameboard.at(mw + 5).at(mh + 2).is_alive = true;
+    gameboard.at(mw + 5).at(mh + 3).is_alive = true;
 }
 
 void user_defined_starting_pattern(Gameboard &gameboard)
 {
+    Font text_font{LoadFont(FONT.c_str())};
+
     // Check board width and height, or number of cells
     int board_width{static_cast<int>(gameboard[0].size())};
     int board_height{static_cast<int>(gameboard.size())};
@@ -160,10 +189,9 @@ void user_defined_starting_pattern(Gameboard &gameboard)
 
     while (!WindowShouldClose())
     {
-
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Q - save & quit", 10, 10, 10, DARKBLUE);
+        DrawTextEx(text_font, "Q - save & quit", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
         print_board(gameboard);
         EndDrawing();
 

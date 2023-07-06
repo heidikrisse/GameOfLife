@@ -4,6 +4,9 @@
  * */
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
+#include "raylib.h"
+
+#include <string>
 
 // Game screen width and height
 inline constexpr int SCREEN_WIDTH{800};
@@ -30,5 +33,8 @@ enum Pattern
     random_pattern,
     custom_pattern
 };
+
+// Font
+const std::string FONT{"../fonts/VT323-Regular.ttf"};
 
 #endif
