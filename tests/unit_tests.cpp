@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "game.h"
+#include "constants.h"
 
 #include <stdexcept>
 #include <vector>
@@ -20,9 +21,9 @@ TEST_CASE("Testing gameboard")
     SUBCASE("Testing creation of incorrectly sized gameboard")
     {
         Gameboard incorrectly_sized_gameboard{create_board(-1, 2)};
-        CHECK(incorrectly_sized_gameboard.at(0).size() == 10);
-        CHECK(incorrectly_sized_gameboard.size() == 10);
-        CHECK_THROWS_AS(incorrectly_sized_gameboard.at(11).at(2), const std::exception &);
+        CHECK(incorrectly_sized_gameboard.at(0).size() == DEFAULT_BOARD_HEIGHT);
+        CHECK(incorrectly_sized_gameboard.size() == DEFAULT_BOARD_WIDTH);
+        CHECK_THROWS_AS(incorrectly_sized_gameboard.at(51).at(2), const std::exception &);
     }
 }
 
@@ -34,7 +35,7 @@ TEST_CASE("Test cell update functions")
         gameboard.at(5).at(5).is_alive = true;
         gameboard.at(5).at(6).is_alive = true;
         gameboard.at(5).at(7).is_alive = true;
-        
+
         CHECK(count_cell_alive_neighbors(gameboard, 5, 6) == 2);
         CHECK(count_cell_alive_neighbors(gameboard, 5, 5) == 1);
         CHECK(count_cell_alive_neighbors(gameboard, 0, 0) == 0);
