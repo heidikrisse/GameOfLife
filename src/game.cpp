@@ -5,6 +5,50 @@
 #include <vector>
 #include <random>
 
+Gameboard create_board(int board_width, int board_height)
+{
+    // If the provided size is not accepted, use the default size
+    if (!accepted_size(board_width, board_height))
+    {
+        board_width = DEFAULT_BOARD_WIDTH;
+        board_height = DEFAULT_BOARD_HEIGHT;
+    }
+
+    // Create the gameboard with the specified width and height
+    Gameboard gameboard(board_height, std::vector<Cell>(board_width));
+
+    return gameboard;
+}
+
+bool accepted_size(int board_width, int board_height)
+{
+    // Check if the provided width and height are within the accepted range
+    return board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH &&
+           board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT;
+}
+
+// Function makes an evolution on the board
+void evolve_board(Gameboard &gameboard)
+{
+    // Make copy of gameboard
+    Gameboard copy_of_board{gameboard};
+
+    int height{static_cast<int>(gameboard.size())};
+    int width{static_cast<int>(gameboard[0].size())};
+
+    for (int row{0}; row < height; ++row)
+    {
+        for (int col{0}; col < width; ++col)
+        {
+            // Calculates the number of neighbors alive from the copy
+            copy_of_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(copy_of_board, row, col);
+
+            // Updates the original board according to the number of neighbors alive in the
+            gameboard.at(row).at(col).is_alive = update_cell(copy_of_board.at(row).at(col));
+        }
+    }
+}
+
 // Function counts number of cell neighbors alive
 int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
 {
@@ -56,28 +100,6 @@ bool update_cell(const Cell &cell)
             return true;
         }
         return false;
-    }
-}
-
-// Function makes an evolution on the board
-void evolve_board(Gameboard &gameboard)
-{
-    // Make copy of gameboard
-    Gameboard copy_of_board{gameboard};
-
-    int height{static_cast<int>(gameboard.size())};
-    int width{static_cast<int>(gameboard[0].size())};
-
-    for (int row{0}; row < height; ++row)
-    {
-        for (int col{0}; col < width; ++col)
-        {
-            // Calculates the number of neighbors alive from the copy, which stays unmodified
-            copy_of_board.at(row).at(col).alive_neighbors = count_cell_alive_neighbors(copy_of_board, row, col);
-
-            // Updates the original board according to the number of neighbors alive in the
-            gameboard.at(row).at(col).is_alive = update_cell(copy_of_board.at(row).at(col));
-        }
     }
 }
 
@@ -150,26 +172,4 @@ void randomize_starting_pattern(Gameboard &gameboard)
             cell.is_alive = dist(gen);
         }
     }
-}
-
-Gameboard create_board(int board_width, int board_height)
-{
-    // If the provided size is not accepted, use the default size
-    if (!accepted_size(board_width, board_height))
-    {
-        board_width = DEFAULT_BOARD_WIDTH;
-        board_height = DEFAULT_BOARD_HEIGHT;
-    }
-
-    // Create the gameboard with the specified width and height
-    Gameboard gameboard(board_height, std::vector<Cell>(board_width));
-
-    return gameboard;
-}
-
-bool accepted_size(int board_width, int board_height)
-{
-    // Check if the provided width and height are within the accepted range
-    return board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH &&
-           board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT;
 }

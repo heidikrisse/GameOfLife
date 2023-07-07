@@ -59,6 +59,31 @@ void game_render_loop(Gameboard &gameboard)
     }
 }
 
+void draw_one_evolution(Gameboard &gameboard, bool rainbow_mode_active)
+{
+    Font text_font{LoadFont(FONT.c_str())};
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    // Display instructions
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step |"
+                          " S - toggle speed | R - rainbow mode",
+               Vector2{10, 10}, 18, 0, DARKBLUE);
+
+    if (rainbow_mode_active)
+    {
+        rainbow_mode(gameboard);
+    }
+    else
+    {
+        // Print gameboard
+        print_board(gameboard);
+    }
+
+    EndDrawing();
+}
+
 // Print board to screen
 void print_board(const Gameboard &gameboard)
 {
@@ -81,6 +106,7 @@ void print_board(const Gameboard &gameboard)
     }
 }
 
+// prints the board using rainbow colors
 void rainbow_mode(const Gameboard &gameboard)
 {
     float width{static_cast<float>(gameboard[0].size())}; // number of rows cast to float
@@ -138,88 +164,6 @@ void rainbow_mode(const Gameboard &gameboard)
             }
         }
     }
-}
-
-void user_defined_starting_pattern(Gameboard &gameboard)
-{
-    Font text_font{LoadFont(FONT.c_str())};
-
-    // Check board width and height, or number of cells
-    float board_width{static_cast<float>(gameboard[0].size())};
-    float board_height{static_cast<float>(gameboard.size())};
-
-    float cell_width{static_cast<float>(SCREEN_WIDTH) / board_width};
-    float cell_height{static_cast<float>(SCREEN_HEIGHT) / board_height};
-
-    int mouse_x{0};
-    int mouse_y{0};
-
-    clear_gameboard(gameboard);
-
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        // Display instructions in the upper-left corner of the board
-        DrawTextEx(text_font, "Q - save & quit", Vector2{10, 10}, 10, 0, DARKBLUE);
-
-        // Draw gameboard
-        print_board(gameboard);
-
-        EndDrawing();
-
-        mouse_x = GetMouseX();
-        mouse_y = GetMouseY();
-
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        {
-            // If mouse position is evenly divisible with cell_scale, subtract one to get correct index
-            if (mouse_x % static_cast<int>(cell_width) == 0)
-            {
-                mouse_x -= 1;
-            }
-            if (mouse_y % static_cast<int>(cell_height) == 0)
-            {
-                mouse_y -= 1;
-            }
-
-            int row = static_cast<float>(mouse_x) / cell_width;
-            int col = static_cast<float>(mouse_y) / cell_height;
-
-            // Toggle the state of the cell
-            gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
-        }
-        if (IsKeyPressed(KEY_Q))
-        {
-            break;
-        }
-    }
-}
-
-void draw_one_evolution(Gameboard &gameboard, bool rainbow_mode_active)
-{
-    Font text_font{LoadFont(FONT.c_str())};
-
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-
-    // Display instructions
-    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step |"
-                          " S - toggle speed | R - rainbow mode",
-               Vector2{10, 10}, 18, 0, DARKBLUE);
-
-    if (rainbow_mode_active)
-    {
-        rainbow_mode(gameboard);
-    }
-    else
-    {
-        // Print gameboard
-        print_board(gameboard);
-    }
-
-    EndDrawing();
 }
 
 // Function to prompt user to confirm the user wants to change the board size
@@ -424,6 +368,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
+
 // Menu function to choose pattern (default, randomized or custom)
 Pattern get_user_input_pattern(Gameboard &gameboard)
 {
@@ -502,4 +447,61 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
     }
 
     return current_pattern;
+}
+
+void user_defined_starting_pattern(Gameboard &gameboard)
+{
+    Font text_font{LoadFont(FONT.c_str())};
+
+    // Check board width and height, or number of cells
+    float board_width{static_cast<float>(gameboard[0].size())};
+    float board_height{static_cast<float>(gameboard.size())};
+
+    float cell_width{static_cast<float>(SCREEN_WIDTH) / board_width};
+    float cell_height{static_cast<float>(SCREEN_HEIGHT) / board_height};
+
+    int mouse_x{0};
+    int mouse_y{0};
+
+    clear_gameboard(gameboard);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Display instructions in the upper-left corner of the board
+        DrawTextEx(text_font, "Q - save & quit", Vector2{10, 10}, 10, 0, DARKBLUE);
+
+        // Draw gameboard
+        print_board(gameboard);
+
+        EndDrawing();
+
+        mouse_x = GetMouseX();
+        mouse_y = GetMouseY();
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            // If mouse position is evenly divisible with cell_scale, subtract one to get correct index
+            if (mouse_x % static_cast<int>(cell_width) == 0)
+            {
+                mouse_x -= 1;
+            }
+            if (mouse_y % static_cast<int>(cell_height) == 0)
+            {
+                mouse_y -= 1;
+            }
+
+            int row = static_cast<float>(mouse_x) / cell_width;
+            int col = static_cast<float>(mouse_y) / cell_height;
+
+            // Toggle the state of the cell
+            gameboard.at(row).at(col).is_alive = !gameboard.at(row).at(col).is_alive;
+        }
+        if (IsKeyPressed(KEY_Q))
+        {
+            break;
+        }
+    }
 }
