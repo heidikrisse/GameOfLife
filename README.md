@@ -64,7 +64,7 @@ make
 
 [@An-Man](https://github.com/An-Man), [@soSkary](https://github.com/soSkary) & [@heidikrisse](https://github.com/heidikrisse)
 
-## Pictures of the UI
+## Screenshots
 
 ![Main Menu](pictures/main_menu_default_settings.png)
 
