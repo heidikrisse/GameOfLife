@@ -61,4 +61,6 @@ make
 
 ## Team
 
+```shell
 @An-Man, @soSkary & @heidikrisse
+```
