@@ -14,7 +14,7 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game of Life - Main Menu");
     SetTargetFPS(30);
 
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     int mouse_x{0};
     int mouse_y{0};
@@ -36,7 +36,6 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        
         // DrawTextEx(font, "Text to display", Vector2{x-pos, y-pos}, font size, spacing, color)
         DrawTextEx(text_font, "Game of Life - Main Menu", Vector2{10, 10}, 40, 0, BLACK);
 

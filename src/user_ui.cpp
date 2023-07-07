@@ -61,7 +61,7 @@ void game_render_loop(Gameboard &gameboard)
 
 void draw_one_evolution(Gameboard &gameboard, bool rainbow_mode_active)
 {
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -169,7 +169,7 @@ void rainbow_mode(const Gameboard &gameboard)
 // Function to prompt user to confirm the user wants to change the board size
 void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_height, Pattern &current_pattern)
 {
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     int mouse_x{0};
     int mouse_y{0};
@@ -233,7 +233,7 @@ void change_board_size_menu(Gameboard &gameboard, int &board_width, int &board_h
 // Function to get user input for the board size (width x height)
 void get_user_input_boardsize(int &board_width, int &board_height)
 {
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     int text_box_x{350};
     int text_box_y{350};
@@ -368,11 +368,10 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
-
 // Menu function to choose pattern (default, randomized or custom)
 Pattern get_user_input_pattern(Gameboard &gameboard)
 {
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     int mouse_y{0};
     int mouse_x{0};
@@ -451,7 +450,7 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
 
 void user_defined_starting_pattern(Gameboard &gameboard)
 {
-    Font text_font{LoadFont(FONT.c_str())};
+    Font text_font{LoadFontEx(FONT.c_str(), 50, NULL, 0)};
 
     // Check board width and height, or number of cells
     float board_width{static_cast<float>(gameboard[0].size())};
