@@ -62,5 +62,5 @@ make
 ## Team
 
 ```shell
-@An-Man, @soSkary & @heidikrisse
+[@An-Man](https://github.com/An-Man), [@soSkary](https://github.com/soSkary) & [@heidikrisse](https://github.com/heidikrisse)
 ```
