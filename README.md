@@ -69,8 +69,11 @@ make
 ### Main Menu:
 ![Main Menu](pictures/main_menu_default_settings.png)
 
-### Start with default pattern and default board size of 50 x 50:
-![Start with default pattern and default board size of 50 x 50](pictures/default_pattern_default_size_rainbow_mode.png)
+### Start with default pattern and default board size of 50 x 50, rainbow mode selected with R:
+![Start with default pattern and default board size of 50 x 50 and rainbow mode](pictures/default_pattern_default_size_rainbow_mode.png)
+
+### Default pattern and default board size of 50 x 50:
+![Default pattern and default board size](pictures/default_pattern_default_size.png)
 
 ### Rainbow mode:
 ![Rainbow mode](pictures/rainbow_mode.png)
