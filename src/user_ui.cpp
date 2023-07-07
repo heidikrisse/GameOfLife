@@ -348,17 +348,19 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
             while (key > 0)
             {
+                // Check that the key pressed is a number &&
+                // that there's not more than max amount of numbers in the char
                 if ((key >= 48) && (key <= 57) && (textbox_number_count < max_input_numbers))
                 {
                     board_size_input[textbox_number_count] = static_cast<char>(key);
                     board_size_input[textbox_number_count + 1] = '\0';
                     ++textbox_number_count;
                 }
-
+                // Get the next key pressed
                 key = GetCharPressed();
             }
 
-            // Handle backspace
+            // Erase with backspace, if there's any number in the char variable
             if (IsKeyPressed(KEY_BACKSPACE) && textbox_number_count > 0)
             {
                 --textbox_number_count;

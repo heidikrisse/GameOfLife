@@ -154,12 +154,14 @@ void randomize_starting_pattern(Gameboard &gameboard)
 
 Gameboard create_board(int board_width, int board_height)
 {
+    // If the provided size is not accepted, use the default size
     if (!accepted_size(board_width, board_height))
     {
         board_width = DEFAULT_BOARD_WIDTH;
         board_height = DEFAULT_BOARD_HEIGHT;
     }
 
+    // Create the gameboard with the specified width and height
     Gameboard gameboard(board_height, std::vector<Cell>(board_width));
 
     return gameboard;
@@ -167,6 +169,7 @@ Gameboard create_board(int board_width, int board_height)
 
 bool accepted_size(int board_width, int board_height)
 {
+    // Check if the provided width and height are within the accepted range
     return board_width >= MIN_BOARD_WIDTH && board_width <= MAX_BOARD_WIDTH &&
            board_height >= MIN_BOARD_HEIGHT && board_height <= MAX_BOARD_HEIGHT;
 }
