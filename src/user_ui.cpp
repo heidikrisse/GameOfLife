@@ -118,7 +118,7 @@ void rainbow_mode(const Gameboard &gameboard)
                     DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, VIOLET);
                     break;
                 case 6:
-                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BROWN);
+                    DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, DARKBLUE);
                     break;
                 case 7:
                     DrawRectangle(row * cell_width, col * cell_height, cell_width - 1, cell_height - 1, BLUE);
@@ -162,7 +162,7 @@ void user_defined_starting_pattern(Gameboard &gameboard)
         ClearBackground(RAYWHITE);
 
         // Display instructions in the upper-left corner of the board
-        DrawTextEx(text_font, "Q - save & quit", Vector2{10.0f, 10.0f}, 10.0f, 0.0f, DARKBLUE);
+        DrawTextEx(text_font, "Q - save & quit", Vector2{10, 10}, 10, 0, DARKBLUE);
 
         // Draw gameboard
         print_board(gameboard);
@@ -205,7 +205,9 @@ void draw_one_evolution(Gameboard &gameboard, bool pride_mode)
     ClearBackground(RAYWHITE);
 
     // Display instructions
-    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step | S - toggle speed | R - rainbow mode", Vector2{10.0f, 10.0f}, 18.0f, 0.0f, DARKBLUE);
+    DrawTextEx(text_font, "Q - quit | P - play/pause | SPACE - step |"
+                          " S - toggle speed | R - rainbow mode",
+               Vector2{10, 10}, 18, 0, DARKBLUE);
 
     if (pride_mode)
     {
@@ -294,14 +296,16 @@ void get_user_input_boardsize(int &board_width, int &board_height)
     int text_box_width{120};
     int text_box_height{30};
 
-    Rectangle text_box{static_cast<float>(text_box_x), static_cast<float>(text_box_y),
-                       static_cast<float>(text_box_width), static_cast<float>(text_box_height)};
+    // Rectangle to anchor textbox for mouse collision and drawing
+    Rectangle text_box{static_cast<float>(text_box_x), static_cast<float>(text_box_y), static_cast<float>(text_box_width), static_cast<float>(text_box_height)};
+
     bool mouse_on_text{false};
     bool text_box_clicked{false};
 
+    // Define how many numbers can be input in the textbox
     const int max_input_numbers{3};
     char board_size_input[max_input_numbers + 1]{"\0"}; // One extra space required for null terminator
-    int letter_count{0};
+    int textbox_number_count{0};
 
     while (!WindowShouldClose())
     {
@@ -320,6 +324,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         {
             text_box_clicked = true;
         }
+        // Check if mouse is clicked outside of text_box
         if (!mouse_on_text && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             text_box_clicked = false;
@@ -328,7 +333,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         // Set the mouse cursor based on whether it's on the text box or not
         if (mouse_on_text)
         {
-            // Set the mouse cursor to an I-beam
+            // If cursor is inside the textbox, set the mouse cursor to an I-beam
             SetMouseCursor(MOUSE_CURSOR_IBEAM);
         }
         else
@@ -343,21 +348,21 @@ void get_user_input_boardsize(int &board_width, int &board_height)
 
             while (key > 0)
             {
-                if ((key >= 48) && (key <= 57) && (letter_count < max_input_numbers))
+                if ((key >= 48) && (key <= 57) && (textbox_number_count < max_input_numbers))
                 {
-                    board_size_input[letter_count] = static_cast<char>(key);
-                    board_size_input[letter_count + 1] = '\0';
-                    ++letter_count;
+                    board_size_input[textbox_number_count] = static_cast<char>(key);
+                    board_size_input[textbox_number_count + 1] = '\0';
+                    ++textbox_number_count;
                 }
 
                 key = GetCharPressed();
             }
 
             // Handle backspace
-            if (IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)
+            if (IsKeyPressed(KEY_BACKSPACE) && textbox_number_count > 0)
             {
-                --letter_count;
-                board_size_input[letter_count] = '\0';
+                --textbox_number_count;
+                board_size_input[textbox_number_count] = '\0';
             }
         }
 
@@ -370,8 +375,8 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         ClearBackground(RAYWHITE);
 
         // Display the title and board size inputs
-        DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10.0, 10.0}, 40, 0, BLACK);
-        DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10.0, 350.0}, 30, 0, BLACK);
+        DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10, 10}, 40, 0, BLACK);
+        DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10, 350}, 30, 0, BLACK);
 
         // Highlight the text box based on if the input is valid (green) or not (red)
         if (accepted_size(board_width, board_height) && text_box_clicked)
@@ -396,7 +401,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         {
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, GRAY);
         }
-        DrawTextEx(text_font, board_size_input, Vector2{static_cast<float>(text_box_x), static_cast<float>(text_box_y)}, 30, 0, BLACK);
+        DrawTextEx(text_font, board_size_input, Vector2{(static_cast<float>(text_box_x)), (static_cast<float>(text_box_y))}, 30, 0, BLACK);
 
         DrawTextEx(text_font, "Press ENTER to confirm the board size", Vector2{10, 410}, 20, 0, BLACK);
 
@@ -432,13 +437,13 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        DrawTextEx(text_font, "Pattern Selection", Vector2{10.0f, 10.0f}, 40.0f, 0.0f, BLACK);
+        DrawTextEx(text_font, "Pattern Selection", Vector2{10, 10}, 40, 0, BLACK);
 
         // Use default pattern
         if (mouse_y >= 180 && mouse_y < 230) // use default
         {
-            DrawTextEx(text_font, "Use default pattern", Vector2{30.0f, 180.0f}, 30.0f, 0.0f, RED);
-            DrawTextEx(text_font, "> ", Vector2{10.0f, 180.0f}, 30.0f, 0.0f, RED);
+            DrawTextEx(text_font, "Use default pattern", Vector2{30, 180}, 30, 0, RED);
+            DrawTextEx(text_font, "> ", Vector2{10, 180}, 30, 0, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 current_pattern = default_pattern;
@@ -449,14 +454,14 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
         }
         else
         {
-            DrawTextEx(text_font, "Use default pattern", Vector2{30.0f, 180.0f}, 30.0f, 0.0f, BLACK);
+            DrawTextEx(text_font, "Use default pattern", Vector2{30, 180}, 30, 0, BLACK);
         }
 
         // Use random pattern
         if (mouse_y >= 230 && mouse_y < 280) // use random
         {
-            DrawTextEx(text_font, "Use random pattern", Vector2{30.0f, 230.0f}, 30.0f, 0.0f, RED);
-            DrawTextEx(text_font, "> ", Vector2{10.0f, 230.0f}, 30.0f, 0.0f, RED);
+            DrawTextEx(text_font, "Use random pattern", Vector2{30, 230}, 30, 0, RED);
+            DrawTextEx(text_font, "> ", Vector2{10, 230}, 30, 0, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 current_pattern = random_pattern;
@@ -467,14 +472,14 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
         }
         else
         {
-            DrawTextEx(text_font, "Use random pattern", Vector2{30.0f, 230.0f}, 30.0f, 0.0f, BLACK);
+            DrawTextEx(text_font, "Use random pattern", Vector2{30, 230}, 30, 0, BLACK);
         }
 
         // Create custom pattern
         if (mouse_y >= 280 && mouse_y < 330)
         {
-            DrawTextEx(text_font, "Create custom pattern", Vector2{30.0f, 280.0f}, 30.0f, 0.0f, RED);
-            DrawTextEx(text_font, "> ", Vector2{10.0f, 280.0f}, 30.0f, 0.0f, RED);
+            DrawTextEx(text_font, "Create custom pattern", Vector2{30, 280}, 30, 0, RED);
+            DrawTextEx(text_font, "> ", Vector2{10, 280}, 30, 0, RED);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 current_pattern = custom_pattern;
@@ -485,7 +490,7 @@ Pattern get_user_input_pattern(Gameboard &gameboard)
         }
         else
         {
-            DrawTextEx(text_font, "Create custom pattern", Vector2{30.0f, 280.0f}, 30.0f, 0.0f, BLACK);
+            DrawTextEx(text_font, "Create custom pattern", Vector2{30, 280}, 30, 0, BLACK);
         }
 
         EndDrawing();

@@ -25,7 +25,7 @@ int main()
     bool default_size{true};
 
     // 0 = default, 1 = random, 2 = custom
-    Pattern current_pattern{default_pattern};
+    Pattern current_pattern{default_pattern}; // Starting pattern on the board
 
     while (!WindowShouldClose())
     {
@@ -36,8 +36,8 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        // Header
-        // DrawTextEx(fontti, "nimi", Vector2{x-koordinaatti, y-koordinaatti}, fontin koko, kirjaintyyli [0 = oletuskirjaintyyli], väri)
+        
+        // DrawTextEx(font, "Text to display", Vector2{x-pos, y-pos}, font size, spacing, color)
         DrawTextEx(text_font, "Game of Life - Main Menu", Vector2{10, 10}, 40, 0, BLACK);
 
         // Start

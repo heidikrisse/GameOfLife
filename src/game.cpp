@@ -19,6 +19,7 @@ int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
         }
         for (int neighbor_col{col - 1}; neighbor_col <= col + 1; ++neighbor_col)
         {
+            // Check that we're not outside the gameboard, and that we're not counting the current cell
             if ((neighbor_col < 0 || neighbor_col >= static_cast<int>(gameboard.at(0).size())) ||
                 (neighbor_row == row && neighbor_col == col))
             {
@@ -33,24 +34,23 @@ int count_cell_alive_neighbors(const Gameboard &gameboard, int row, int col)
     return cell_alive_neighbors;
 }
 
+// A function that returns a bool if the cell should be alive or dead next evolution
 bool update_cell(const Cell &cell)
 {
     // If cell is alive
     if (cell.is_alive)
     {
-        // Cell becomes dead (is_alive = false) if < 2 or > 3 neighbors are alive,
-        // otherwise cell state remains the same
-        if (cell.alive_neighbors < 2 || cell.alive_neighbors > 3)
+        // Cell stays alive if 2 or 3 neighbors are alive, otherwise cell dies
+        if (cell.alive_neighbors == 2 || cell.alive_neighbors == 3)
         {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
-    // If cell is dead
+    // If cell initial state is dead
     else
     {
-        // Cell becomes alive (is_alive = true) if 3 neighbor cells alive, otherwise
-        // cell state remains the same
+        // Cell becomes alive if 3 neighbor cells alive
         if (cell.alive_neighbors == 3)
         {
             return true;
@@ -62,7 +62,7 @@ bool update_cell(const Cell &cell)
 // Function makes an evolution on the board
 void evolve_board(Gameboard &gameboard)
 {
-    // make copy of gameboard
+    // Make copy of gameboard
     Gameboard copy_of_board{gameboard};
 
     int height{static_cast<int>(gameboard.size())};
@@ -105,6 +105,7 @@ void default_starting_pattern(Gameboard &gameboard)
     int mh{height / 2}; // middle height
     int mw{width / 2};  // middle width
 
+    // Set the cell of the copperheadpattern to alive
     gameboard.at(mw - 6).at(mh).is_alive = true;
     gameboard.at(mw - 6).at(mh + 1).is_alive = true;
     gameboard.at(mw - 5).at(mh).is_alive = true;
@@ -141,6 +142,7 @@ void randomize_starting_pattern(Gameboard &gameboard)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(0, 1); // 0 = false, 1 = true
 
+    // Randomly set each cell to alive or dead
     for (auto &row : gameboard)
     {
         for (auto &cell : row)
