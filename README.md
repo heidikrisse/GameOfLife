@@ -64,3 +64,17 @@ make
 
 [@An-Man](https://github.com/An-Man), [@soSkary](https://github.com/soSkary) & [@heidikrisse](https://github.com/heidikrisse)
 
+## Pictures of the UI
+
+![Main Menu](pictures/main_menu_default_settings.png)
+
+![Start with default pattern and default board size of 50 x 50](pictures/default_pattern_default_size_rainbow_mode.png)
+
+![Change board size confirmation](pictures/change_boardsize_confirmation.png)
+
+![Invalid value entered when setting board size](pictures/set_boardsize_invalid_value.png)
+
+![Valid value entered when setting board size](pictures/set_boardsize_valid_value.png)
+
+![Pattern Selection menu](pictures/pattern_selection_menu.png)
+
