@@ -70,6 +70,8 @@ make
 
 ![Start with default pattern and default board size of 50 x 50](pictures/default_pattern_default_size_rainbow_mode.png)
 
+![Rainbow mode](pictures/rainbow_mode.png)
+
 ![Change board size confirmation](pictures/change_boardsize_confirmation.png)
 
 ![Invalid value entered when setting board size](pictures/set_boardsize_invalid_value.png)
