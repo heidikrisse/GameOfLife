@@ -58,3 +58,7 @@ make
 ```shell
 ../tests/unit_tests_results
 ```
+
+## Team
+
+@An-Man, @soSkary & @heidikrisse
