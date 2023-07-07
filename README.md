@@ -87,6 +87,6 @@ make
 ### Valid board size with green color:
 ![Valid board size entered when setting board size](pictures/set_boardsize_valid_value.png)
 
-### Pattern Selection menu
+### Pattern Selection menu:
 ![Pattern Selection menu](pictures/pattern_selection_menu.png)
 
