@@ -13,7 +13,7 @@ void game_render_loop(Gameboard &gameboard)
     bool game_paused{true};
     // Speed state, toggle between 0.5s and 0.1s
     bool faster_loop{false};
-    bool pride_mode{false};
+    bool rainbow_mode_active{false};
     while (!WindowShouldClose())
     {
         // Check for keyboard input P - play/pause, SPACE - evolve 1 and pause, Q - quit
@@ -36,16 +36,16 @@ void game_render_loop(Gameboard &gameboard)
         }
         if (IsKeyPressed(KEY_R))
         {
-            pride_mode = !pride_mode;
+            rainbow_mode_active = !rainbow_mode_active;
         }
         if (game_paused)
         {
-            draw_one_evolution(gameboard, pride_mode);
+            draw_one_evolution(gameboard, rainbow_mode_active);
         }
         if (!game_paused)
         {
             evolve_board(gameboard);
-            draw_one_evolution(gameboard, pride_mode);
+            draw_one_evolution(gameboard, rainbow_mode_active);
 
             if (!faster_loop)
             {
@@ -197,7 +197,7 @@ void user_defined_starting_pattern(Gameboard &gameboard)
     }
 }
 
-void draw_one_evolution(Gameboard &gameboard, bool pride_mode)
+void draw_one_evolution(Gameboard &gameboard, bool rainbow_mode_active)
 {
     Font text_font{LoadFont(FONT.c_str())};
 
@@ -209,7 +209,7 @@ void draw_one_evolution(Gameboard &gameboard, bool pride_mode)
                           " S - toggle speed | R - rainbow mode",
                Vector2{10, 10}, 18, 0, DARKBLUE);
 
-    if (pride_mode)
+    if (rainbow_mode_active)
     {
         rainbow_mode(gameboard);
     }
@@ -363,12 +363,13 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             // Erase with backspace, if there's any number in the char variable
             if (IsKeyPressed(KEY_BACKSPACE) && textbox_number_count > 0)
             {
+                // decrease counter and replace the char with null terminator
                 --textbox_number_count;
                 board_size_input[textbox_number_count] = '\0';
             }
         }
 
-        // Convert the input for integers for board width and height
+        // Convert the input to integers for board width and height
         board_width = atoi(board_size_input);
         board_height = board_width;
 
@@ -380,7 +381,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         DrawTextEx(text_font, "Game of Life - Set Board Size", Vector2{10, 10}, 40, 0, BLACK);
         DrawTextEx(text_font, "Enter board size (20-250):", Vector2{10, 350}, 30, 0, BLACK);
 
-        // Highlight the text box based on if the input is valid (green) or not (red)
+        // Highlight the text box based on if the input is valid (green) or not (red), white if not selected
         if (accepted_size(board_width, board_height) && text_box_clicked)
         {
             DrawRectangleRec(text_box, GREEN);
@@ -403,6 +404,7 @@ void get_user_input_boardsize(int &board_width, int &board_height)
         {
             DrawRectangleLines(text_box_x, text_box_y, text_box_width, text_box_height, GRAY);
         }
+        // Draw the numbers that are input in the textbox
         DrawTextEx(text_font, board_size_input, Vector2{(static_cast<float>(text_box_x)), (static_cast<float>(text_box_y))}, 30, 0, BLACK);
 
         DrawTextEx(text_font, "Press ENTER to confirm the board size", Vector2{10, 410}, 20, 0, BLACK);
@@ -418,10 +420,11 @@ void get_user_input_boardsize(int &board_width, int &board_height)
             }
         }
     }
+    // Set the mouse cursor always to default when exiting change board size menu
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 }
 
-// Function to choose pattern (default, randomized or custom)
+// Menu function to choose pattern (default, randomized or custom)
 Pattern get_user_input_pattern(Gameboard &gameboard)
 {
     Font text_font{LoadFont(FONT.c_str())};
