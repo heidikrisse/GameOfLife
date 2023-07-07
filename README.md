@@ -67,16 +67,23 @@ make
 ## Screenshots
 
 ![Main Menu](pictures/main_menu_default_settings.png)
+### Main Menu
 
 ![Start with default pattern and default board size of 50 x 50](pictures/default_pattern_default_size_rainbow_mode.png)
+### Start with default pattern and default board size of 50 x 50
 
 ![Rainbow mode](pictures/rainbow_mode.png)
+### Rainbow mode
 
-![Change board size confirmation](pictures/change_boardsize_confirmation.png)
+![Confirm board size change](pictures/change_boardsize_confirmation.png)
+### Confirm board size change
 
-![Invalid value entered when setting board size](pictures/set_boardsize_invalid_value.png)
+![Invalid board size entered when setting board size](pictures/set_boardsize_invalid_value.png)
+### Invalid board size with red color
 
-![Valid value entered when setting board size](pictures/set_boardsize_valid_value.png)
+![Valid board size entered when setting board size](pictures/set_boardsize_valid_value.png)
+### Valid board size with green color
 
 ![Pattern Selection menu](pictures/pattern_selection_menu.png)
+### Pattern Selection menu
 
