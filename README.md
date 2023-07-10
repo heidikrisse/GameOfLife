@@ -64,6 +64,10 @@ make
 
 [@An-Man](https://github.com/An-Man), [@soSkary](https://github.com/soSkary) & [@heidikrisse](https://github.com/heidikrisse)
 
+## Font
+
+https://fonts.google.com/specimen/VT323/about
+
 ## Screenshots
 
 ### Main Menu:
